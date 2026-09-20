@@ -37,7 +37,7 @@
 | 数据会上传吗？ | 默认不会，解析和报告都在本机完成 |
 
 <p align="center">
-  <img src="./assets/dashboard.png" alt="Ledger Dashboard，使用合成演示数据" width="100%" />
+  <img src="./assets/dashboard.jpg" alt="Ledger Dashboard，使用合成演示数据" width="100%" />
 </p>
 
 <sub>截图使用合成演示数据，仓库不包含任何人的真实 Codex Usage 历史。</sub>
