@@ -10,7 +10,7 @@ For a security-sensitive report, contact the maintainer through the security rep
 
 ## Data handling expectations
 
-Ledger v0.1 is designed to:
+Ledger v0.1.1 is designed to:
 
 - process Codex telemetry locally;
 - avoid a Ledger account or cloud backend;

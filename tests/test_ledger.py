@@ -1,6 +1,10 @@
 import json
 import tempfile
+import threading
 import unittest
+import urllib.request
+from functools import partial
+from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import sys
@@ -104,7 +108,58 @@ class LedgerParserTests(unittest.TestCase):
             index = report.read_text(encoding="utf-8")
             self.assertIn("ledger-data.local.js", index)
             self.assertIn("quota-snapshot.local.js", index)
+            self.assertIn("ledger-refresh.local.js", index)
+            bridge = (output / "ledger-refresh.local.js").read_text(encoding="utf-8")
+            self.assertIn("/api/refresh", bridge)
 
+    def test_live_refresh_endpoint_returns_fresh_payload(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            home = self.make_home(root)
+            output = root / "report"
+            records, quota, stats = ledger.collect(home, None)
+            payload = ledger.payload_for(records, quota, stats, home)
+            ledger.build_report(output, payload)
+
+            handler = partial(ledger.LedgerRequestHandler, directory=str(output))
+            ledger.LedgerRequestHandler.refresh_callback = lambda: ledger.refresh_report_data(output, home, None)
+            server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                rollout = next((home / "sessions").rglob("rollout-*.jsonl"))
+                extra = {
+                    "timestamp": "2026-09-20T02:00:00Z",
+                    "type": "event_msg",
+                    "payload": {
+                        "type": "token_count",
+                        "info": {
+                            "last_token_usage": {
+                                "input_tokens": 3000,
+                                "cached_input_tokens": 2100,
+                                "output_tokens": 300,
+                                "reasoning_output_tokens": 60,
+                                "total_tokens": 3300,
+                            }
+                        },
+                    },
+                }
+                with rollout.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(extra) + "\n")
+
+                url = f"http://127.0.0.1:{server.server_address[1]}/api/refresh"
+                with urllib.request.urlopen(url, timeout=3) as response:
+                    fresh = json.loads(response.read())
+                    self.assertEqual(response.status, 200)
+                    self.assertEqual(response.headers.get("Cache-Control"), "no-store, max-age=0")
+                self.assertEqual(fresh["meta"]["counts"]["records"], 3)
+                self.assertEqual(fresh["records"][-1]["date"], "2026-09-20")
+                persisted = (output / "ledger-data.local.js").read_text(encoding="utf-8")
+                self.assertIn("2026-09-20", persisted)
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=3)
 
 
 if __name__ == "__main__":

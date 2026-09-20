@@ -10,15 +10,15 @@ Use this skill for questions such as “open my Codex usage dashboard”, “whe
 1. Treat the user's explicit request as higher priority than this workflow.
 2. Keep all parsing local. Do not print, summarize, or upload prompt text, tool output, secrets, raw rollout contents, or full local paths.
 3. Locate this installed skill's plugin root, then run its bundled `scripts/ledger.py` with Python 3. The script lives at `<plugin-root>/scripts/ledger.py`.
-4. For the normal dashboard flow, run:
+4. For the normal dashboard flow, start the bundled local server:
 
    ```bash
    python3 <plugin-root>/scripts/ledger.py --open
    ```
 
-   The parser reads `$CODEX_HOME` when set, otherwise `~/.codex`, and writes the latest report under `~/.codex/ledger/latest/` by default.
+   This is a long-running local process: it binds to `127.0.0.1`, opens the dashboard, and enables the **Refresh data** button to rescan local Codex telemetry. When operating through a terminal tool, run it as a background/long-running process so the conversation can continue. The parser reads `$CODEX_HOME` when set, otherwise `~/.codex`, and writes the latest report under `~/.codex/ledger/latest/` by default.
 5. If the user requests a different local report location or history horizon, pass `--output PATH` or `--days N`. `--days 0` parses all discoverable persisted sessions.
-6. After the script finishes, report only the short summary it prints: record/task/project/model counts, coverage diagnostics, whether an observed quota snapshot was found, and the report path. Do not quote raw session data.
+6. Once the server starts, report only the short summary it prints: record/task/project/model counts, coverage diagnostics, whether an observed quota snapshot was found, the report path, and the localhost URL. Do not quote raw session data.
 7. If the user asks for analysis in chat, you may run `python3 <plugin-root>/scripts/ledger.py --json` and analyze the sanitized normalized payload. Do not reopen raw rollout JSONL unless the user explicitly asks for low-level debugging.
 
 ## Interpretation rules

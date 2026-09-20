@@ -93,7 +93,8 @@ const records=IS_LIVE_REPORT?EXTERNAL_PAYLOAD.records.map(normalizeRecord).filte
 const taskCatalog=[...new Map(records.map(row=>[row.taskId,{id:row.taskId,name:row.task,project:row.project,model:row.model}])).values()];
 const PROJECTS=[...new Set(records.map(row=>row.project))].sort((a,b)=>a.localeCompare(b));
 const MODELS=[...new Set(records.map(row=>row.model))].sort((a,b)=>a.localeCompare(b));
-const anchorDate=records.length?records.reduce((max,row)=>row.date>max?row.date:max,records[0].date):new Date().toISOString().slice(0,10);
+const localTodayISO=()=>{const now=new Date(),local=new Date(now.getTime()-now.getTimezoneOffset()*60000);return local.toISOString().slice(0,10);};
+const anchorDate=IS_LIVE_REPORT?localTodayISO():(records.length?records.reduce((max,row)=>row.date>max?row.date:max,records[0].date):localTodayISO());
 const shiftISO=(value,days)=>{const date=new Date(`${value}T00:00:00Z`);date.setUTCDate(date.getUTCDate()+days);return date.toISOString().slice(0,10);};
 const initialStart=shiftISO(anchorDate,-6);
 const initialEnd=anchorDate;
@@ -339,6 +340,15 @@ function applyStaticLanguage(){
     ['.page-footer>span','Ledger · Independent community tool','Ledger · 独立社区工具'],['.page-footer div>span','Local records ≠ complete account billing','本地记录 ≠ 账户全量账单']
   ];
   bindings.forEach(([selector,en,cn])=>{const element=document.querySelector(selector);if(element)element.textContent=zh?cn:en;});
+  const snapshotStatus=document.querySelector('.snapshot-status>span'),refreshStrong=document.querySelector('.refresh-popover>strong'),refreshBody=document.querySelector('.refresh-popover>p');
+  if(snapshotStatus)snapshotStatus.textContent=!IS_LIVE_REPORT?(zh?'演示快照':'Demo snapshot'):(typeof window.ledgerRefreshAdapter==='function'?(zh?'实时本地数据':'Live local data'):(zh?'静态本地快照':'Static local snapshot'));
+  if(!IS_LIVE_REPORT){
+    if(refreshStrong)refreshStrong.textContent=zh?'演示预览':'Demo preview';
+    if(refreshBody)refreshBody.textContent=zh?'当前页面使用合成演示数据。要读取并刷新你本机的 Codex 数据，请运行 python3 scripts/ledger.py --open。':'This page uses synthetic demo data. To read and refresh your local Codex data, run python3 scripts/ledger.py --open.';
+  }else if(typeof window.ledgerRefreshAdapter!=='function'){
+    if(refreshStrong)refreshStrong.textContent=zh?'静态本地快照':'Static local snapshot';
+    if(refreshBody)refreshBody.textContent=zh?'当前快照不会从浏览器直接重新读取本机日志。请用 --open 或 --serve 启动 Ledger，即可启用实时刷新。':'This static snapshot cannot rescan local logs from the browser. Start Ledger with --open or --serve to enable live refresh.';
+  }
   const ariaBindings=[
     ['.sidebar','Primary navigation','主导航'],['.brand','Ledger home','Ledger 首页'],['.language-switch','Language','语言'],
     ['.quota-layout','Account quota snapshot','账户额度快照'],['.quota-five .quota-meter','Five-hour quota 73% used','五小时额度已使用 73%'],['.quota-week .quota-meter','Weekly quota 18% used','每周额度已使用 18%'],
@@ -475,7 +485,7 @@ $('export-button').addEventListener('click',async()=>{const button=$('export-but
 document.querySelectorAll('[data-language]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.language===state.language)return;state.language=button.dataset.language;closeDrawer();applyStaticLanguage();populateTaskOptions();$('sort-tasks').textContent=`${t('sortTokens')} ${state.descending?'↓':'↑'}`;render();}));
 $('refresh-info').addEventListener('click',event=>{event.stopPropagation();const open=$('refresh-popover').hidden;$('refresh-popover').hidden=!open;$('refresh-info').setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',event=>{if(!event.target.closest('.refresh-cluster')){$('refresh-popover').hidden=true;$('refresh-info').setAttribute('aria-expanded','false');}});
-$('refresh-button').addEventListener('click',async()=>{const button=$('refresh-button'),label=button.querySelector('span');button.classList.add('loading');button.disabled=true;label.textContent=t('refreshing');let quotaUpdated=false;try{let result={};if(typeof window.ledgerRefreshAdapter==='function'){result=await window.ledgerRefreshAdapter()||{};if(Array.isArray(result.records))records.splice(0,records.length,...result.records);quotaUpdated=applyQuotaSnapshot(result.quota||result.quotaSnapshot);}else{quotaUpdated=await loadQuotaSidecar();await new Promise(resolve=>setTimeout(resolve,650));}if(quotaUpdated&&typeof window.ledgerPersistQuotaSnapshot==='function')await window.ledgerPersistQuotaSnapshot(quotaSnapshot);if(!quotaUpdated)quotaRefreshState='unchanged';render();renderQuota();$('snapshot-time').textContent=state.language==='zh'?'刚刚更新':'Updated just now';showToast(quotaUpdated?t('refreshDoneWithQuota',records.length):t('refreshDoneNoQuota',records.length));}catch(error){showToast(state.language==='zh'?'刷新失败 · 已保留上次数据':'Refresh failed · kept the last data');console.error('Ledger refresh failed',error);}finally{button.classList.remove('loading');button.disabled=false;label.textContent=t('refreshData');}});
+$('refresh-button').addEventListener('click',async()=>{const button=$('refresh-button'),label=button.querySelector('span');button.classList.add('loading');button.disabled=true;label.textContent=t('refreshing');try{if(typeof window.ledgerRefreshAdapter==='function'){const result=await window.ledgerRefreshAdapter()||{};showToast(state.language==='zh'?`本地刷新完成 · ${result.records??'—'} 条记录`:`Local refresh complete · ${result.records??'—'} records`);if(result.reload!==false){window.setTimeout(()=>window.location.reload(),120);return;}}else if(IS_LIVE_REPORT){showToast(state.language==='zh'?'当前是静态快照 · 请用 --open 或 --serve 启动实时刷新':'Static snapshot · start Ledger with --open or --serve for live refresh');return;}else{showToast(state.language==='zh'?'演示模式 · 运行 python3 scripts/ledger.py --open 读取真实数据':'Demo mode · run python3 scripts/ledger.py --open for live local data');return;}}catch(error){showToast(state.language==='zh'?'刷新失败 · 已保留上次数据':'Refresh failed · kept the last data');console.error('Ledger refresh failed',error);}finally{button.classList.remove('loading');button.disabled=false;label.textContent=t('refreshData');}});
 
 setInterval(()=>{const elapsed=Math.floor((Date.now()-quotaStarted)/1000);$('five-countdown').textContent=quotaSnapshot.five.source==='unavailable'?'—':formatCountdown(quotaSnapshot.five.seconds-elapsed);$('week-countdown').textContent=quotaSnapshot.week.source==='unavailable'?'—':formatCountdown(quotaSnapshot.week.seconds-elapsed,true);},1000);
 const storedQuota=readStoredQuota();

@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.1-111827.svg">
 </p>
 
 # Know where your Codex usage goes.
@@ -144,7 +144,7 @@ Analyze my Codex usage for the last 7 days.
 Show me my 5 most expensive Codex tasks.
 ```
 
-The bundled Skill runs the local parser, generates a private static report, and can analyze the **sanitized normalized payload** without dumping raw rollout logs into the conversation.
+The bundled Skill runs the local parser, starts the private local dashboard, and can analyze the **sanitized normalized payload** without dumping raw rollout logs into the conversation.
 
 > Plugin installation behavior can vary by supported client. The marketplace command and package format follow the current [OpenAI Plugin documentation](https://developers.openai.com/plugins/build/plugins). The direct local method below remains available even when a client does not expose Plugins.
 
@@ -152,7 +152,7 @@ The bundled Skill runs the local parser, generates a private static report, and 
 
 ## Run locally
 
-Ledger has **no npm dependencies and no build step**. Python 3 is only used to parse your local Codex session telemetry and generate the static report.
+Ledger has **no npm dependencies and no build step**. Python 3 parses your local Codex session telemetry and serves the dashboard on `127.0.0.1`. With `--open`, the **Refresh data** button rescans `~/.codex` immediately — no model call and no Codex quota is used for the refresh itself.
 
 ```bash
 git clone https://github.com/ctdaniel/codex-ledger.git
@@ -160,13 +160,17 @@ cd codex-ledger
 python3 scripts/ledger.py --open
 ```
 
-By default Ledger:
+With `--open`, Ledger:
 
 1. reads `$CODEX_HOME` or `~/.codex`,
 2. scans the most recent 90 days of persisted sessions,
 3. keeps only normalized usage metadata,
 4. writes the report to `~/.codex/ledger/latest/`,
-5. opens `index.html` in your browser.
+5. starts a local-only HTTP server on `127.0.0.1`,
+6. opens the dashboard in your browser,
+7. rescans local Codex telemetry whenever you click **Refresh data**.
+
+Keep the terminal process running while you use live refresh. Press `Ctrl+C` to stop it. If you open the generated `index.html` directly with `file://`, it is a static snapshot and cannot rescan local files from the browser sandbox.
 
 Useful options:
 
@@ -176,6 +180,9 @@ python3 scripts/ledger.py --days 0 --open
 
 # Write to a different local directory
 python3 scripts/ledger.py --output ./ledger-report --open
+
+# Serve without opening a browser
+python3 scripts/ledger.py --serve
 
 # Print the sanitized normalized payload instead of generating a report
 python3 scripts/ledger.py --json
@@ -254,7 +261,7 @@ The repository's demo data is synthetic. Files matching local report / snapshot 
 
 ## Data coverage & limitations
 
-Ledger v0.1 intentionally avoids pretending that local telemetry is a formal billing API.
+Ledger v0.1.1 intentionally avoids pretending that local telemetry is a formal billing API.
 
 - Codex's persisted local session format can evolve; the parser is best-effort and covered by fixtures/tests.
 - Sessions without persisted `last_token_usage` events cannot contribute token records.
@@ -288,7 +295,7 @@ codex-ledger/
 └── assets/
 ```
 
-The Plugin is intentionally Skill-first in v0.1. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
+The Plugin is intentionally Skill-first in v0.1.1. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
 
 ---
 
@@ -309,7 +316,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and [docs/D
 
 ## Roadmap
 
-### Available in v0.1
+### Available in v0.1.1
 
 - [x] local Codex token parser
 - [x] project / model / task attribution
@@ -319,6 +326,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and [docs/D
 - [x] bilingual dashboard
 - [x] Codex Plugin + Ledger Analysis Skill
 - [x] GitHub marketplace packaging
+- [x] live local refresh from the dashboard (`--open` / `--serve`)
 
 ### Planned
 

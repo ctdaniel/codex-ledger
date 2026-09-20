@@ -3,7 +3,7 @@
 
 The parser is deliberately local-only and dependency-free. It reads metadata and token
 usage from Codex's persisted session files, discards prompt/tool contents, normalizes
-records, and writes a static report that can be opened in any browser.
+records, and writes a local dashboard that can be opened in any browser.
 """
 from __future__ import annotations
 
@@ -12,7 +12,11 @@ import json
 import os
 import shutil
 import sys
+import threading
 import webbrowser
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlparse
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -390,6 +394,89 @@ def write_quota_js(path: Path, quota: dict[str, Any] | None) -> None:
     path.write_text(f"window.__CODEX_QUOTA_SNAPSHOT__ = {data};\n", encoding="utf-8")
 
 
+def write_refresh_bridge(path: Path) -> None:
+    path.write_text(
+        """(function () {
+  if (!/^https?:$/.test(window.location.protocol)) return;
+  window.__LEDGER_LIVE_SERVER__ = true;
+  window.ledgerRefreshAdapter = async function () {
+    const response = await fetch(`/api/refresh?ts=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Ledger refresh failed (${response.status})`);
+    const payload = await response.json();
+    return { reload: true, records: payload?.meta?.counts?.records ?? 0, generatedAt: payload?.meta?.generatedAt ?? null };
+  };
+})();
+""",
+        encoding="utf-8",
+    )
+
+
+def refresh_report_data(output: Path, codex_home: Path, days: int | None) -> dict[str, Any]:
+    records, quota, stats = collect(codex_home, days)
+    payload = payload_for(records, quota, stats, codex_home)
+    write_js(output / "ledger-data.local.js", payload)
+    write_quota_js(output / "quota-snapshot.local.js", quota)
+    return payload
+
+
+class LedgerRequestHandler(SimpleHTTPRequestHandler):
+    """Serve the generated report and expose a local-only refresh endpoint."""
+
+    refresh_callback = None
+
+    def end_headers(self) -> None:
+        self.send_header("Cache-Control", "no-store, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        super().end_headers()
+
+    def log_message(self, format: str, *args: Any) -> None:
+        return
+
+    def do_GET(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/refresh":
+            callback = type(self).refresh_callback
+            if callback is None:
+                self.send_error(503, "Refresh unavailable")
+                return
+            try:
+                payload = callback()
+                body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as exc:  # pragma: no cover - defensive server boundary
+                body = json.dumps({"error": exc.__class__.__name__}).encode("utf-8")
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            return
+        super().do_GET()
+
+
+def serve_report(output: Path, codex_home: Path, days: int | None, host: str, port: int, open_browser: bool) -> None:
+    handler = partial(LedgerRequestHandler, directory=str(output))
+    LedgerRequestHandler.refresh_callback = lambda: refresh_report_data(output, codex_home, days)
+    server = ThreadingHTTPServer((host, port), handler)
+    actual_port = server.server_address[1]
+    url = f"http://{host}:{actual_port}/"
+    print(f"  live:     {url}")
+    print("  refresh:  enabled · rescans local Codex telemetry without calling a model")
+    print("  stop:     Ctrl+C")
+    if open_browser:
+        threading.Timer(0.15, lambda: webbrowser.open(url)).start()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nLedger live server stopped.")
+    finally:
+        server.server_close()
+
+
 def build_report(output: Path, payload: dict[str, Any]) -> Path:
     output.mkdir(parents=True, exist_ok=True)
     for filename in DASHBOARD_FILES:
@@ -401,7 +488,7 @@ def build_report(output: Path, payload: dict[str, Any]) -> Path:
     index_path = output / "index.html"
     index = index_path.read_text(encoding="utf-8")
     marker = '<script src="quota-snapshot.example.js?v=demo-1"></script>'
-    injection = '<script src="ledger-data.local.js"></script>\n  <script src="quota-snapshot.local.js"></script>'
+    injection = '<script src="ledger-data.local.js"></script>\n  <script src="quota-snapshot.local.js"></script>\n  <script src="ledger-refresh.local.js"></script>'
     if marker in index:
         index = index.replace(marker, injection)
     else:
@@ -410,6 +497,7 @@ def build_report(output: Path, payload: dict[str, Any]) -> Path:
 
     write_js(output / "ledger-data.local.js", payload)
     write_quota_js(output / "quota-snapshot.local.js", payload.get("quota"))
+    write_refresh_bridge(output / "ledger-refresh.local.js")
     return index_path
 
 
@@ -438,7 +526,10 @@ def main() -> int:
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")), help="Codex home directory (default: $CODEX_HOME or ~/.codex)")
     parser.add_argument("--output", type=Path, default=Path.home() / ".codex" / "ledger" / "latest", help="Report output directory")
     parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help=f"Parse the most recent N days (default: {DEFAULT_DAYS}; 0 = all)")
-    parser.add_argument("--open", action="store_true", help="Open the generated dashboard in the default browser")
+    parser.add_argument("--open", action="store_true", help="Open the dashboard and keep a local live-refresh server running")
+    parser.add_argument("--serve", action="store_true", help="Serve the dashboard on localhost with live refresh (without opening a browser)")
+    parser.add_argument("--host", default="127.0.0.1", help="Live server bind host (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=0, help="Live server port (default: choose an available local port)")
     parser.add_argument("--json", action="store_true", help="Print the sanitized normalized payload to stdout instead of writing a report")
     args = parser.parse_args()
 
@@ -454,8 +545,15 @@ def main() -> int:
     print_summary(payload, report)
     if not records:
         print("\nNo token_count events were found. Ledger will still open, but the report contains no live usage records.", file=sys.stderr)
-    if args.open:
-        webbrowser.open(report.as_uri())
+    if args.open or args.serve:
+        serve_report(
+            args.output.expanduser().resolve(),
+            codex_home,
+            args.days or None,
+            args.host,
+            args.port,
+            args.open,
+        )
     return 0
 
 

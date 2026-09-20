@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.1-111827.svg">
 </p>
 
 # 看清你的 Codex 用量到底去哪了。
@@ -116,7 +116,7 @@ Ledger **不会**拿 Token 总量反推出一个假的会员额度百分比。�
 
 ## 安装成 Codex Plugin · 推荐
 
-Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.1 **不需要 MCP Server，也不需要任何外部账号**。
+Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.1.1 **不需要 MCP Server，也不需要任何外部账号**。
 
 ### 1. 添加 GitHub Marketplace
 
@@ -152,7 +152,7 @@ codex plugin marketplace add ctdaniel/codex-ledger
 
 ## 本地直接运行
 
-Ledger **没有 npm 依赖，也不需要 Build**。Python 3 只用来解析 Codex 本地 Session Telemetry，并生成静态 Dashboard。
+Ledger **没有 npm 依赖，也不需要 Build**。Python 3 用来解析 Codex 本地 Session Telemetry，并在 `127.0.0.1` 启动本地 Dashboard。使用 `--open` 时，页面里的 **刷新数据** 会立即重新扫描 `~/.codex`；刷新本身不会调用模型，也不会消耗 Codex 模型额度。
 
 ```bash
 git clone https://github.com/ctdaniel/codex-ledger.git
@@ -160,13 +160,17 @@ cd codex-ledger
 python3 scripts/ledger.py --open
 ```
 
-默认情况下，Ledger 会：
+使用 `--open` 时，Ledger 会：
 
 1. 读取 `$CODEX_HOME`，没有设置时读取 `~/.codex`；
 2. 扫描最近 90 天已持久化的 Session；
 3. 只保留标准化的 Usage Metadata；
 4. 把报告写到 `~/.codex/ledger/latest/`；
-5. 用默认浏览器打开 `index.html`。
+5. 在 `127.0.0.1` 启动仅本机可访问的 HTTP Server；
+6. 自动在默认浏览器打开 Dashboard；
+7. 每次点击 **刷新数据** 时重新扫描最新的 Codex 本地记录。
+
+使用实时刷新时请保持终端进程运行；按 `Ctrl+C` 停止。如果直接通过 `file://` 打开生成的 `index.html`，它只是静态快照，受浏览器沙箱限制，无法重新读取本机 Codex 文件。
 
 常用参数：
 
@@ -176,6 +180,9 @@ python3 scripts/ledger.py --days 0 --open
 
 # 输出到其他本地目录
 python3 scripts/ledger.py --output ./ledger-report --open
+
+# 只启动本地服务，不自动打开浏览器
+python3 scripts/ledger.py --serve
 
 # 不生成页面，只输出脱敏后的标准化 Payload
 python3 scripts/ledger.py --json
@@ -254,7 +261,7 @@ Ledger 从设计上就是 Local-first。
 
 ## 数据覆盖与限制
 
-Ledger v0.1 不会把“本地 Telemetry”假装成正式 Billing API。
+Ledger v0.1.1 不会把“本地 Telemetry”假装成正式 Billing API。
 
 - Codex 本地 Session 格式未来可能变化；Parser 是 best-effort，并通过 Fixture / Unit Test 做回归验证。
 - 没有持久化 `last_token_usage` 的 Session 无法贡献 Token 记录。
@@ -288,7 +295,7 @@ codex-ledger/
 └── assets/
 ```
 
-v0.1 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
+v0.1.1 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
 
 ---
 
@@ -307,7 +314,7 @@ python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 
 ## Roadmap
 
-### v0.1 已有
+### v0.1.1 已有
 
 - [x] Codex 本地 Token Parser
 - [x] 项目 / 模型 / 任务归因
@@ -317,6 +324,7 @@ python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 - [x] 中英文 Dashboard
 - [x] Codex Plugin + Ledger Analysis Skill
 - [x] GitHub Marketplace Packaging
+- [x] Dashboard 实时本地刷新（`--open` / `--serve`）
 
 ### 后续计划
 

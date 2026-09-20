@@ -2,6 +2,20 @@
 
 All notable changes to Ledger are documented here.
 
+## 0.1.1 — Live refresh fix
+
+### Fixed
+
+- `python3 scripts/ledger.py --open` now starts a local-only live server instead of opening a frozen file snapshot.
+- **Refresh data** now rescans current local Codex telemetry and rewrites the local report before reloading the dashboard.
+- Live Today / 7-day / 30-day ranges anchor to the current local date.
+- Demo and static-snapshot refresh states now explain their limitations instead of pretending to refresh local logs.
+
+### Added
+
+- `--serve`, `--host`, and `--port` options for the dependency-free local server.
+- No-cache headers for live Ledger assets and refresh responses.
+
 ## 0.1.0 — Initial public release
 
 ### Added
