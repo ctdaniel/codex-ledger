@@ -37,7 +37,7 @@ No Ledger account. No cloud backend. No telemetry.
 | Is the data leaving my machine? | No. Parsing and reports are local by default |
 
 <p align="center">
-  <img src="./assets/dashboard.png" alt="Ledger dashboard with synthetic demo data" width="100%" />
+  <img src="./assets/dashboard.jpg" alt="Ledger dashboard with synthetic demo data" width="100%" />
 </p>
 
 <sub>The screenshot uses synthetic demo data. Ledger does not ship anyone's real usage history.</sub>
