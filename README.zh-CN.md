@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.2-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.3-111827.svg">
 </p>
 
 # 看清你的 Codex 用量到底去哪了。
@@ -116,7 +116,7 @@ Ledger **不会**拿 Token 总量反推出一个假的会员额度百分比。�
 
 ## 安装成 Codex Plugin · 推荐
 
-Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.1.2 **不需要 MCP Server，也不需要任何外部账号**。
+Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.1.3 **不需要 MCP Server，也不需要任何外部账号**。
 
 ### 1. 添加 GitHub Marketplace
 
@@ -263,7 +263,7 @@ Ledger 从设计上就是 Local-first。
 
 ## 数据覆盖与限制
 
-Ledger v0.1.2 不会把“本地 Telemetry”假装成正式 Billing API。
+Ledger v0.1.3 不会把“本地 Telemetry”假装成正式 Billing API。
 
 - Codex 本地 Session 格式未来可能变化；Parser 是 best-effort，并通过 Fixture / Unit Test 做回归验证。
 - 没有持久化 `last_token_usage` 的 Session 无法贡献 Token 记录。
@@ -297,7 +297,7 @@ codex-ledger/
 └── assets/
 ```
 
-v0.1.2 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
+v0.1.3 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
 
 ---
 
@@ -316,7 +316,7 @@ python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 
 ## Roadmap
 
-### v0.1.2 已有
+### v0.1.3 已有
 
 - [x] Codex 本地 Token Parser
 - [x] 项目 / 模型 / 任务归因
