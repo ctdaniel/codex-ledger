@@ -18,6 +18,13 @@ class DenseDataUiContractTests(unittest.TestCase):
         self.assertIn('id="matrix-compact"', html)
         self.assertIn('id="matrix-all"', html)
 
+    def test_project_distribution_hides_zero_usage_rows(self):
+        app = (ROOT / "app.js").read_text(encoding="utf-8")
+        self.assertIn(".filter(item=>item.total>0)", app)
+        self.assertIn("formatProjectShare", app)
+        self.assertIn("'<0.1%'", app)
+        self.assertNotIn(".filter(v=>v.total>0||state.project==='all')", app)
+
     def test_dense_views_have_long_label_safety(self):
         app = (ROOT / "app.js").read_text(encoding="utf-8")
         css = (ROOT / "app.css").read_text(encoding="utf-8")
