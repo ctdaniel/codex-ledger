@@ -1,0 +1,32 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local Ledger reports and Codex-derived data
+ledger-data.local.js
+ledger-data.local.json
+quota-snapshot.local.js
+quota-snapshot.local.json
+*.local.js
+*.local.json
+ledger-report/
+reports/
+
+# Generic secrets / local config
+.env
+.env.*
+!.env.example
+
+# Logs / coverage / build output
+*.log
+coverage/
+dist/
+build/

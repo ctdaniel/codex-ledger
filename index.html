@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Local-first Codex token, model and quota usage dashboard">
+  <title>Ledger · Codex usage dashboard</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="light">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <a class="brand" href="#overview" aria-label="Ledger home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-copy"><strong>Ledger</strong><small>Codex usage</small></span>
+      </a>
+      <nav class="nav-list">
+        <button class="nav-item active" data-target="overview" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-target="models">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V4M16 19v-7M22 19V7"/></svg>
+          <span>Models</span>
+        </button>
+        <button class="nav-item" data-target="attribution">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h7l2 2h9v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7.5V5a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v2.5"/></svg>
+          <span>Attribution</span>
+        </button>
+      </nav>
+      <div class="privacy-note">
+        <span class="privacy-status"><i></i><span>Processed locally</span></span>
+        <p>No conversations, prompts, or API keys are uploaded.</p>
+      </div>
+    </aside>
+
+    <main class="main" id="overview">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg><strong id="breadcrumb-current">Usage overview</strong></div>
+        <div class="top-actions">
+          <span class="demo-badge"><i></i><span id="mode-badge">Demo data</span></span>
+          <div class="language-switch" role="group" aria-label="Language"><button class="active" data-language="en" aria-pressed="true">EN</button><button data-language="zh" aria-pressed="false">中</button></div>
+          <button class="icon-button" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme" aria-pressed="true">
+            <svg class="theme-dark-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.2A8.4 8.4 0 0 1 8.8 4 8.5 8.5 0 1 0 20 15.2Z"/></svg>
+            <svg class="theme-light-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
+          <button class="export-button" id="export-button" title="Export dashboard image" aria-label="Export dashboard image">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+            <span>Export</span>
+          </button>
+          <div class="refresh-cluster">
+            <button class="refresh-button" id="refresh-button" aria-label="Refresh data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg><span>Refresh data</span></button>
+            <button class="refresh-info" id="refresh-info" aria-label="How refresh works" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button>
+            <div class="refresh-popover" id="refresh-popover" hidden>
+              <span class="refresh-eyebrow">Refresh engine</span><strong>Local parser · No model</strong>
+              <p>Refresh re-reads local usage logs and recalculates the dashboard. It does not call a model or use Codex quota.</p>
+              <div class="refresh-note"><i></i><span id="refresh-quota-note">Account quota cards update when a fresh quota snapshot is available.</span></div>
+              <div class="refresh-note"><i></i><span id="refresh-model-note">Starting a new Codex task to run this skill does use the model selected for that task.</span></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">Usage, at a glance.</h1>
+          <p>See where your Codex usage goes, from account quota to individual model calls.</p>
+        </div>
+        <div class="snapshot-status"><i></i><span>Static snapshot</span><strong id="snapshot-time">2026.09.17 · 19:30 CST</strong></div>
+      </section>
+
+      <section class="quota-layout" aria-label="账户额度快照">
+        <article class="quota-card quota-five">
+          <div class="quota-top"><div><span>5-hour window</span><small>Account-wide · Observed</small></div><strong><span id="five-used">73</span><small>%</small></strong></div>
+          <div class="quota-meter warning" id="five-meter" role="meter" aria-label="五小时额度已使用 73%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="73"><i style="--quota:.73"></i></div>
+          <div class="quota-bottom"><span id="five-usage-copy">73% used · 27% left</span><span><span id="five-reset-label">Reset in </span><b id="five-countdown">02:14:32</b></span></div>
+          <p class="quota-estimate"><span>Estimated</span><span id="five-estimate-copy">At this pace, the short window may hit its limit before reset</span></p>
+        </article>
+        <article class="quota-card quota-week">
+          <div class="quota-top"><div><span>Weekly window</span><small>Account-wide · Observed</small></div><strong><span id="week-used">18</span><small>%</small></strong></div>
+          <div class="quota-meter" id="week-meter" role="meter" aria-label="每周额度已使用 18%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="--quota:.18"></i></div>
+          <div class="quota-bottom"><span id="week-usage-copy">18% used · 82% left</span><span><span id="week-reset-label">Reset in </span><b id="week-countdown">6d 11h</b></span></div>
+          <p class="quota-estimate"><span>Estimated</span><span id="week-estimate-copy">Projected to use 64% by the end of this cycle</span></p>
+        </article>
+        <article class="quota-advice">
+          <span class="advice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v10M12 18v.5"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <div><strong>Short-window pace is high</strong><p>The 5-hour window is ahead of elapsed time; weekly pacing remains normal. Quota snapshots are independent of the token filters below.</p><small class="status-source" id="quota-source">Observed quota snapshot · demo data</small></div>
+        </article>
+      </section>
+
+      <section class="filter-dock" aria-label="数据筛选">
+        <div class="filter-controls">
+          <div class="segmented" aria-label="时间范围">
+            <button data-range="today">Today</button>
+            <button class="active" data-range="7d" aria-pressed="true">Last 7 days</button>
+            <button data-range="30d">Last 30 days</button>
+            <button data-range="custom">Custom</button>
+          </div>
+          <select id="project-filter" aria-label="Filter by project"><option value="all">All projects</option></select>
+          <select id="task-filter" aria-label="Filter by task"><option value="all">All tasks</option></select>
+          <select id="model-filter" aria-label="Filter by model"><option value="all">All models</option></select>
+          <div class="custom-range" id="custom-range">
+            <input type="date" id="start-date" value="2026-09-11" aria-label="开始日期">
+            <span>to</span>
+            <input type="date" id="end-date" value="2026-09-17" aria-label="结束日期">
+          </div>
+          <button class="reset-button" id="reset-filters">Reset</button>
+        </div>
+        <div class="filter-context"><span id="filter-summary"></span><small>Local time · Local observations</small></div>
+      </section>
+
+      <section class="kpi-rail" aria-label="当前范围摘要" aria-live="polite">
+        <div class="kpi-primary"><span>Total Tokens · Observed</span><strong id="total-tokens">—</strong><small id="total-detail">—</small></div>
+        <div><span>Burn Rate · Calculated</span><strong id="burn-rate">—</strong><small id="burn-detail">—</small></div>
+        <div><span>Tokens / Task · Calculated</span><strong id="tokens-task">—</strong><small id="tokens-task-detail">—</small></div>
+        <div><span>Cache Hit · Calculated</span><strong id="cache-rate">—</strong><small id="cache-detail">—</small></div>
+      </section>
+
+      <section class="panel insights-panel" aria-labelledby="insights-title">
+        <header class="section-head compact"><div><h2 id="insights-title">Usage insights</h2><p>Generated from transparent rules using the current filters. Up to four insights.</p></div><span class="scope-label">Calculated · Current period</span></header>
+        <div class="insights-list" id="usage-insights" aria-live="polite"></div>
+      </section>
+
+      <section class="model-card" id="models" aria-labelledby="model-title">
+        <header class="section-head model-section-head">
+          <div><h2 id="model-title">Model quota intensity & token usage</h2><p>Compare estimated quota intensity or generation speed on the left, observed token volume on the right.</p></div>
+          <div class="formula-chip"><span>Intensity metric</span><strong>Estimated credits ÷ model turns</strong></div>
+        </header>
+        <div class="insight-row" id="model-insights"></div>
+        <div class="model-columns">
+          <section class="rank-panel speed-panel" aria-labelledby="left-rank-title">
+            <div class="rank-title"><div><span>Quota & performance</span><h3 id="left-rank-title">Quota intensity</h3></div><div class="metric-switch" aria-label="Ranking metric"><button class="active" data-left-metric="burn" aria-pressed="true">Quota intensity</button><button data-left-metric="speed" aria-pressed="false">Generation speed</button></div></div>
+            <div class="rank-list" id="left-ranking" aria-live="polite"></div>
+          </section>
+          <section class="rank-panel volume-panel" aria-labelledby="volume-title">
+            <div class="rank-title"><div><span>Usage</span><h3 id="volume-title">Token volume</h3></div><small>tokens</small></div>
+            <div class="rank-list" id="volume-ranking" aria-live="polite"></div>
+          </section>
+        </div>
+        <footer class="model-footnote"><span><i class="speed-key"></i><span id="intensity-footnote">Quota intensity is shown only when a built-in rate mapping is available</span></span><span><i class="volume-key"></i><span id="speed-footnote">Generation speed is output token/s; durations are synthetic in this demo</span></span></footer>
+      </section>
+
+      <section class="analytics-grid" aria-label="时间趋势与构成">
+        <article class="panel trend-panel">
+          <header class="section-head compact"><div><h2>Token timeline</h2><p>Hover to compare the matching day in the previous period; click to drill down.</p></div><div class="legend"><span><i class="cache"></i><span id="legend-cached">Cached input</span></span><span><i class="input"></i><span id="legend-uncached">Uncached input</span></span><span><i class="output"></i><span id="legend-output">Output</span></span></div></header>
+          <div class="chart-frame"><svg id="timeline-chart" viewBox="0 0 820 260" role="group" aria-label="按日 Token 消耗堆叠柱状图"></svg><div class="chart-tooltip" id="timeline-tooltip"></div></div>
+          <div class="chart-caption"><span id="timeline-range"></span><span>Input + output = total</span></div>
+        </article>
+        <article class="panel composition-panel">
+          <header class="section-head compact"><div><h2>Token composition</h2><p>Current filter range</p></div></header>
+          <strong class="composition-total" id="composition-total">—</strong>
+          <div class="composition-track" id="composition-track"></div>
+          <div class="composition-list" id="composition-list"></div>
+          <p class="panel-note">Reasoning tokens are a subset of output and are not counted twice.</p>
+        </article>
+      </section>
+
+      <section class="diagnostics-grid" aria-label="交叉分析与异常任务">
+        <article class="panel matrix-panel">
+          <header class="section-head compact"><div><h2>Model × project</h2><p>Darker cells indicate more concentrated token usage.</p></div><span class="scope-label">Current period · All projects</span></header>
+          <div class="heatmap-scroll"><div class="heatmap" id="model-project-heatmap"></div></div>
+        </article>
+        <article class="panel outlier-panel">
+          <header class="section-head compact"><div><h2>Task efficiency map</h2><p>Total tokens × cache hit rate; only high-usage outliers are labelled.</p></div><span class="scope-label">Point area = turns</span></header>
+          <div class="outlier-frame"><svg id="outlier-chart" viewBox="0 0 520 250" role="group" aria-label="任务 Token 总量与缓存命中率散点图"></svg><div class="chart-tooltip" id="outlier-tooltip"></div></div>
+        </article>
+      </section>
+
+      <section class="attribution-grid" id="attribution" aria-label="消耗归因">
+        <article class="panel projects-panel">
+          <header class="section-head compact"><div><h2>Project distribution</h2><p>Click a project to filter every detail.</p></div><span class="scope-label" id="project-count">—</span></header>
+          <div class="project-list" id="project-list"></div>
+        </article>
+        <article class="panel expensive-panel">
+          <header class="section-head compact"><div><h2>Top expensive tasks</h2><p id="top-task-summary">Top 5 in the current period.</p></div><span class="scope-label">Calculated · Click for drivers</span></header>
+          <div class="expensive-list" id="top-expensive-tasks"></div>
+        </article>
+      </section>
+
+      <section class="panel tasks-panel task-table-panel" aria-label="任务明细">
+        <header class="section-head compact"><div><h2><span id="task-details-title">Task details</span> <small id="task-count"></small></h2><p>Open any task to inspect its consumption drivers and turns.</p></div><input id="task-search" type="search" placeholder="Search tasks or models" aria-label="Search tasks or models"></header>
+        <div class="table-scroll"><table><thead><tr><th>Task / Project</th><th>Model</th><th><button id="sort-tasks">Total tokens ↓</button></th><th>Tokens / Turn</th><th>Output speed</th><th>Cache</th><th>Driver</th></tr></thead><tbody id="task-table-body"></tbody></table></div>
+        <footer class="table-footer"><span id="table-status"></span><div><button id="previous-page" aria-label="Previous page">Previous</button><span id="page-number"></span><button id="next-page" aria-label="Next page">Next</button></div></footer>
+      </section>
+
+      <footer class="page-footer"><span>Ledger · Independent community tool</span><div><button id="motion-toggle">Reduce motion</button><span>Local records ≠ complete account billing</span></div></footer>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop">
+    <section class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1">
+      <button class="drawer-close" id="drawer-close" aria-label="Close details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      <div id="drawer-content"></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <!-- Optional local bridge emitted by the skill. It works from file:// where fetch() may be blocked. -->
+  <script src="quota-snapshot.example.js?v=demo-1"></script>
+  <script src="app.js?v=codex-ledger-2"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "codex-ledger",
+  "interface": {
+    "displayName": "Ledger for Codex"
+  },
+  "plugins": [
+    {
+      "name": "codex-ledger",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ctdaniel/codex-ledger.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

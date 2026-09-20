@@ -1,0 +1,47 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "codex-ledger",
+  "version": "0.1.0",
+  "description": "Local-first Codex usage analytics and observability.",
+  "author": {
+    "name": "Daniel Chen",
+    "url": "https://github.com/ctdaniel"
+  },
+  "homepage": "https://github.com/ctdaniel/codex-ledger",
+  "repository": "https://github.com/ctdaniel/codex-ledger",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "usage",
+    "analytics",
+    "observability",
+    "tokens",
+    "local-first"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Ledger for Codex",
+        "shortDescription": "See where Codex usage goes.",
+        "longDescription": "Generate a private local dashboard for Codex token usage, projects, models, tasks, trends, and observed quota snapshots.",
+        "developerName": "Daniel Chen",
+        "category": "Developer Tools",
+        "defaultPrompt": [
+          "Open my Codex usage dashboard.",
+          "Analyze my Codex usage for the last 7 days.",
+          "Show my most expensive Codex tasks."
+        ],
+        "brandColor": "#0A84FF",
+        "websiteURL": "https://github.com/ctdaniel/codex-ledger",
+        "screenshots": [
+          "./assets/dashboard.png"
+        ],
+        "capabilities": [
+          "Analyze local Codex usage",
+          "Open a private local usage dashboard",
+          "Compare projects, models, tasks, and trends"
+        ]
+      }
+    }
+  }
+}
