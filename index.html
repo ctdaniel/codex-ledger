@@ -158,8 +158,17 @@
 
       <section class="diagnostics-grid" aria-label="交叉分析与异常任务">
         <article class="panel matrix-panel">
-          <header class="section-head compact"><div><h2>Model × project</h2><p>Darker cells indicate more concentrated token usage.</p></div><span class="scope-label">Current period · All projects</span></header>
-          <div class="heatmap-scroll"><div class="heatmap" id="model-project-heatmap"></div></div>
+          <header class="section-head compact matrix-section-head">
+            <div><h2>Model × project</h2><p>Darker cells indicate more concentrated token usage.</p></div>
+            <div class="matrix-header-tools">
+              <span class="scope-label" id="matrix-scope">Current period · Top projects / models</span>
+              <div class="matrix-view-switch" role="group" aria-label="Matrix view">
+                <button id="matrix-compact" class="active" type="button" aria-pressed="true">Compact</button>
+                <button id="matrix-all" type="button" aria-pressed="false">Show all</button>
+              </div>
+            </div>
+          </header>
+          <div class="heatmap-scroll" id="heatmap-scroll"><div class="heatmap" id="model-project-heatmap"></div></div>
         </article>
         <article class="panel outlier-panel">
           <header class="section-head compact"><div><h2>Task efficiency map</h2><p>Total tokens × cache hit rate; only high-usage outliers are labelled.</p></div><span class="scope-label">Point area = turns</span></header>
@@ -197,6 +206,6 @@
   <div class="toast" id="toast" role="status"></div>
   <!-- Optional local bridge emitted by the skill. It works from file:// where fetch() may be blocked. -->
   <script src="quota-snapshot.example.js?v=demo-1"></script>
-  <script src="app.js?v=codex-ledger-2"></script>
+  <script src="app.js?v=codex-ledger-3"></script>
 </body>
 </html>

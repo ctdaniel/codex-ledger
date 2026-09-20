@@ -2,13 +2,30 @@
 
 All notable changes to Ledger are documented here.
 
+## 0.1.2 — Dense-data readability
+
+### Fixed
+
+- Model × project no longer uses a hard-coded four-column grid, which caused model labels and project rows to wrap into the wrong visual positions when more models were present.
+- Long project, task, and model labels now truncate consistently without breaking dashboard layout.
+
+### Improved
+
+- Model × project defaults to the six highest-usage projects and five highest-usage models, with a **Show all** view for the complete scrollable matrix.
+- Full matrix mode uses sticky project/model headers and quieter empty cells.
+- Matrix cells now drill down to the selected project + model intersection.
+- Task efficiency tooltips are more readable and outlier labels stay inside the chart.
+- Top expensive tasks and task details handle long names more cleanly.
+- Task table density is improved, showing up to eight rows per page with responsive secondary columns.
+
 ## 0.1.1 — Live refresh fix
 
 ### Fixed
 
 - `python3 scripts/ledger.py --open` now starts a local-only live server instead of opening a frozen file snapshot.
-- **Refresh data** now rescans current local Codex telemetry and rewrites the local report before reloading the dashboard.
-- Live Today / 7-day / 30-day ranges anchor to the current local date.
+- **Refresh data** now rescans current local Codex telemetry and returns fresh records/quota observations.
+- Rolling Today / 7-day / 30-day ranges re-anchor after refresh, including new same-day usage.
+- Project, model, and task filters rebuild when refreshed data changes.
 - Demo and static-snapshot refresh states now explain their limitations instead of pretending to refresh local logs.
 
 ### Added
