@@ -2,6 +2,14 @@
 
 All notable changes to Ledger are documented here.
 
+## 0.1.3 — Project distribution cleanup
+
+### Fixed
+
+- Project distribution now shows only projects with usage in the current filtered period, removing zero-token rows that made the card unnecessarily tall.
+- Project count now matches the rows actually shown in the distribution.
+- Positive project shares below 0.1% display as `<0.1%` instead of the misleading `0.0%`.
+
 ## 0.1.2 — Dense-data readability
 
 ### Fixed
