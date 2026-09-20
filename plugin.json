@@ -34,7 +34,7 @@
         "brandColor": "#0A84FF",
         "websiteURL": "https://github.com/ctdaniel/codex-ledger",
         "screenshots": [
-          "./assets/dashboard.png"
+          "./assets/dashboard.jpg"
         ],
         "capabilities": [
           "Analyze local Codex usage",
