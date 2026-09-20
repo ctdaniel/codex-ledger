@@ -1,0 +1,1 @@
+<p align="center">\n  <img src="./assets/hero.svg" alt="Ledger — local-first usage analytics for Codex" width="100%" />\n</p>\n\n<p align="center">\n  <strong>English</strong> · <a href="./README.zh-CN.md"><strong>简体中文</strong></a>\n</p>\n\n# Ledger\n\nPublishing Ledger v0.1.0…\n
