@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.2-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.3-111827.svg">
 </p>
 
 # Know where your Codex usage goes.
@@ -261,7 +261,7 @@ The repository's demo data is synthetic. Files matching local report / snapshot 
 
 ## Data coverage & limitations
 
-Ledger v0.1.2 intentionally avoids pretending that local telemetry is a formal billing API.
+Ledger v0.1.3 intentionally avoids pretending that local telemetry is a formal billing API.
 
 - Codex's persisted local session format can evolve; the parser is best-effort and covered by fixtures/tests.
 - Sessions without persisted `last_token_usage` events cannot contribute token records.
@@ -295,7 +295,7 @@ codex-ledger/
 └── assets/
 ```
 
-The Plugin is intentionally Skill-first in v0.1.2. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
+The Plugin is intentionally Skill-first in v0.1.3. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
 
 ---
 
@@ -316,7 +316,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and [docs/D
 
 ## Roadmap
 
-### Available in v0.1.2
+### Available in v0.1.3
 
 - [x] local Codex token parser
 - [x] project / model / task attribution
