@@ -150,6 +150,57 @@ codex plugin marketplace add ctdaniel/codex-ledger
 
 ---
 
+## 更新 Ledger
+
+### 如果你是以 Codex Plugin 方式安装
+
+Terminal 里的 `codex` 命令来自 **Codex CLI**。仅仅在 ChatGPT 桌面端安装 Ledger Plugin，**不会**自动给你的 Shell 安装 `codex` 命令。
+
+先检查 Codex CLI 是否存在：
+
+```bash
+command -v codex
+codex --version
+```
+
+如果提示 `codex: command not found`，macOS / Linux 可以使用 OpenAI 当前官方安装脚本安装 Codex CLI：
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+```
+
+安装完成后新开一个 Terminal，再确认：
+
+```bash
+codex --version
+```
+
+然后刷新 Ledger Marketplace：
+
+```bash
+codex plugin marketplace upgrade codex-ledger
+```
+
+如果不确定当前配置了哪些 Marketplace，可以先运行：
+
+```bash
+codex plugin marketplace list
+```
+
+升级后重新启动 Codex，输入 `/plugins`，确认 **Ledger for Codex** 仍为 Installed，然后开启一个新 Session，让最新版 Skill 重新加载。
+
+如果 Ledger 是通过**工作空间同步的 GitHub Marketplace** 安装，管理员也可以进入 **Workspace settings → Plugins → Marketplaces → Sync now** 立即同步；如果单独导入的 Plugin 管理页显示 **Refresh**，也可以直接使用该操作刷新来源。
+
+### 如果你是直接 Clone GitHub 仓库使用
+
+```bash
+cd codex-ledger
+git pull
+python3 scripts/ledger.py --open
+```
+
+---
+
 ## 本地直接运行
 
 Ledger **没有 npm 依赖，也不需要 Build**。Python 3 用来解析 Codex 本地 Session Telemetry，并在 `127.0.0.1` 启动本地 Dashboard。使用 `--open` 时，页面里的 **刷新数据** 会立即重新扫描 `~/.codex`；刷新本身不会调用模型，也不会消耗 Codex 模型额度。
