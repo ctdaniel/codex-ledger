@@ -150,6 +150,57 @@ The bundled Skill runs the local parser, starts the private local dashboard, and
 
 ---
 
+## Update Ledger
+
+### If you installed Ledger as a Codex Plugin
+
+The `codex` terminal command comes from **Codex CLI**. Installing Ledger from ChatGPT desktop does **not** automatically install the CLI on your shell.
+
+Check whether Codex CLI is available:
+
+```bash
+command -v codex
+codex --version
+```
+
+If your terminal says `codex: command not found`, install the current Codex CLI on macOS / Linux with OpenAI's installer:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+```
+
+Then open a new terminal and verify:
+
+```bash
+codex --version
+```
+
+Refresh the Ledger marketplace snapshot:
+
+```bash
+codex plugin marketplace upgrade codex-ledger
+```
+
+You can inspect configured marketplaces first if needed:
+
+```bash
+codex plugin marketplace list
+```
+
+After upgrading, start Codex, open `/plugins`, confirm **Ledger for Codex** is installed, then start a new session so the updated Skill is loaded.
+
+If Ledger was installed through a **workspace-synced GitHub marketplace**, an admin can instead use **Workspace settings → Plugins → Marketplaces → Sync now**. If an individually imported plugin shows a **Refresh** action, that action refreshes the plugin source.
+
+### If you cloned the repository directly
+
+```bash
+cd codex-ledger
+git pull
+python3 scripts/ledger.py --open
+```
+
+---
+
 ## Run locally
 
 Ledger has **no npm dependencies and no build step**. Python 3 parses your local Codex session telemetry and serves the dashboard on `127.0.0.1`. With `--open`, the **Refresh data** button rescans `~/.codex` immediately — no model call and no Codex quota is used for the refresh itself.
