@@ -2,6 +2,29 @@
 
 All notable changes to Ledger are documented here.
 
+## 0.2.0 — Session & Context Intelligence
+
+### Added
+
+- Per-session **Tokens / Turn** as a first-class metric, based on unique persisted Codex turn IDs when available.
+- **Context Growth** analysis using observed per-turn input tokens as a transparent proxy: first-five-turn average vs last-five-turn average.
+- Session health states — **Stable**, **Growing**, **Heavy**, and **Limited data** — derived from the user's own local distribution rather than an external benchmark.
+- **Peak Turn** detection and a session context-growth chart in the detail drawer.
+- Session Health summary plus a Context Growth watchlist for quickly finding sessions worth inspecting.
+- Session-oriented insights for context growth and period-over-period Tokens / Turn changes.
+
+### Improved
+
+- Task details are now session-aware, with first/last input averages, observed span, context growth, peak turn, and transparent driver explanations.
+- Consumption drivers now cover long sessions, high context growth, high tokens / turn, low cache reuse, output-heavy sessions, and unusually expensive turns.
+- The local parser preserves sanitized `turnId` and `timestamp` metadata needed for turn-level analysis without copying prompt bodies or full local paths.
+- Plugin prompts and Skill guidance now support questions such as “Why was this session expensive?” and “Which sessions have the fastest context growth?”.
+
+### Notes
+
+- Context Growth is **calculated from observed input-token history**. It is not the model's official context-window occupancy.
+- Session health is a transparent local heuristic relative to the user's own usage; it is not a quality score or an instruction to restart a session.
+
 ## 0.1.3 — Project distribution cleanup
 
 ### Fixed

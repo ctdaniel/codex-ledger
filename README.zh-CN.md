@@ -12,12 +12,12 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.3-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-111827.svg">
 </p>
 
 # 看清你的 Codex 用量到底去哪了。
 
-**Ledger** 是一个免费、开源、Local-first（本地优先）的 Codex 用量分析工具。它把 Codex 已经保存在你电脑上的本地 Usage 数据，整理成清楚的 **Token、项目、模型、任务、趋势、缓存效率，以及可观测额度窗口** Dashboard。
+**Ledger** 是一个免费、开源、Local-first（本地优先）的 Codex 用量分析工具。它把 Codex 已经保存在你电脑上的本地 Usage 数据，整理成清楚的 **Token、项目、模型、Session、单轮 Context 增长、缓存效率、趋势，以及可观测额度窗口** Dashboard。
 
 不需要 Ledger 账号，不需要云端服务，不发送 Telemetry。
 
@@ -32,7 +32,7 @@
 | 最近到底用了多少？ | 可观测 Token 总量 + 与上一周期对比 |
 | 当前消耗是不是太快？ | 消耗速率（Burn Rate）+ 可观测额度窗口节奏 |
 | 用量都花在哪？ | 项目、模型、模型 × 项目分布 |
-| 哪些任务最费？ | 高消耗任务、单轮 Token、缓存命中、消耗特征 |
+| 为什么某个 Session 特别费？ | Tokens / Turn、Context 增长、峰值轮次、缓存复用和透明 Driver |
 | 最近有什么变化？ | 环比变化 + 基于透明规则生成的 Usage Insights |
 | 数据会上传吗？ | 默认不会，解析和报告都在本机完成 |
 
@@ -51,7 +51,7 @@ Codex 可以完成很多工作，但原始 Usage 轨迹并不容易一眼看懂�
 | 没有 Ledger | 使用 Ledger |
 |---|---|
 | “我的用量到底去哪了？” | 看项目 / 模型归因 |
-| “为什么这个任务这么大？” | 看任务 Token 构成和消耗特征 |
+| “为什么这个 Session 这么大？” | 看 Session Health、Context 增长、峰值轮次和透明 Driver |
 | “今天是不是异常？” | 看消耗速率、异常点和上一周期对比 |
 | “缓存有没有起作用？” | 看缓存命中率和缓存 / 非缓存输入 |
 | “额度还剩多少？” | Codex 本地有可观测快照时展示 5 小时 / 每周窗口 |
@@ -70,7 +70,7 @@ Ledger **不会**拿 Token 总量反推出一个假的会员额度百分比。�
 
 - 可观测 Token 总量
 - 消耗速率（Burn Rate）
-- 单任务 Token
+- 单 Session / 单轮 Token
 - 缓存命中率
 - 与上一周期比较
 
@@ -90,13 +90,13 @@ Ledger **不会**拿 Token 总量反推出一个假的会员额度百分比。�
 <tr>
 <td width="50%" valign="top">
 
-### 找出高消耗任务
+### 看懂 Session
 
-- Top Expensive Tasks
-- 任务效率分布图
 - Tokens / Turn
-- Task Detail
-- 透明规则生成的消耗特征
+- 前几轮 vs 后几轮 Context 增长
+- 峰值轮次检测
+- 基于自己历史基线的 Session Health
+- Session Detail + 透明规则生成的消耗特征
 
 </td>
 <td width="50%" valign="top">
@@ -116,7 +116,7 @@ Ledger **不会**拿 Token 总量反推出一个假的会员额度百分比。�
 
 ## 安装成 Codex Plugin · 推荐
 
-Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.1.3 **不需要 MCP Server，也不需要任何外部账号**。
+Ledger 已经打包成可移植 Agent Plugin，并内置 `ledger-analysis` Skill。v0.2 **不需要 MCP Server，也不需要任何外部账号**。
 
 ### 1. 添加 GitHub Marketplace
 
@@ -211,15 +211,19 @@ Ledger 会区分三种数据：
 安装 Plugin 后可以试试：
 
 ```text
-最近 30 天哪个项目消耗最多？
+为什么我最近最贵的 Codex Session 会这么大？
 ```
 
 ```text
-哪些任务的单轮 Token 明显偏高？
+哪些 Session 的 Context 增长最快？
 ```
 
 ```text
-我的缓存命中率相比上一周期有没有改善？
+我的 Tokens / Turn 相比上一周期有没有上升？
+```
+
+```text
+哪些长 Session 同时存在明显偏低的缓存复用？
 ```
 
 ```text
@@ -263,10 +267,12 @@ Ledger 从设计上就是 Local-first。
 
 ## 数据覆盖与限制
 
-Ledger v0.1.3 不会把“本地 Telemetry”假装成正式 Billing API。
+Ledger v0.2 不会把“本地 Telemetry”假装成正式 Billing API 或官方 Context Window API。
 
 - Codex 本地 Session 格式未来可能变化；Parser 是 best-effort，并通过 Fixture / Unit Test 做回归验证。
 - 没有持久化 `last_token_usage` 的 Session 无法贡献 Token 记录。
+- Context 增长使用每轮可观测输入 Token 作为本地代理指标，**不等于官方 Context Window 占用率**。
+- Session Health 只相对你自己的本地使用分布判断，不是行业 Benchmark，也不是质量评分。
 - 只有观察到本地 `rate_limits` Snapshot 时才展示额度卡片。
 - 不会根据 Token 总量虚构 5 小时 / 每周额度百分比。
 - 只有存在可用 Duration Telemetry 时才展示生成速度。
@@ -297,7 +303,7 @@ codex-ledger/
 └── assets/
 ```
 
-v0.1.3 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
+v0.2 有意采用 **Skill-first Plugin**。仅仅为了读取本机已有文件并生成 Dashboard，并不需要额外启动一个 MCP Server。
 
 ---
 
@@ -316,21 +322,24 @@ python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 
 ## Roadmap
 
-### v0.1.3 已有
+### v0.2.0 已有
 
-- [x] Codex 本地 Token Parser
-- [x] 项目 / 模型 / 任务归因
+- [x] Codex 本地 Token Parser + 实时刷新
+- [x] 项目 / 模型 / Session 归因
 - [x] 消耗速率、缓存和环比分析
-- [x] 高消耗任务 + Task Driver
+- [x] Tokens / Session + Tokens / Turn
+- [x] Session Context 增长分析（前几轮 vs 后几轮）
+- [x] 峰值轮次 + 基于个人历史基线的 Session Health
+- [x] Session Detail + Context Growth 曲线 + 透明 Driver
+- [x] Session 维度 Usage Insights
 - [x] 本地存在时读取可观测额度快照
 - [x] 中英文 Dashboard
 - [x] Codex Plugin + Ledger Analysis Skill
 - [x] GitHub Marketplace Packaging
-- [x] Dashboard 实时本地刷新（`--open` / `--serve`）
 
 ### 后续计划
 
-- [ ] 更深入的 Session / Context Health
+- [ ] 本地 Telemetry 支持时加入 Tool / File / MCP Call 可观测能力
 - [ ] 更完整的 Parser Coverage Diagnostics
 - [ ] 可导出的隐私安全报告
 - [ ] 如果确实能提升体验，再增加可选 Local MCP

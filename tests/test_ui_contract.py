@@ -32,6 +32,25 @@ class DenseDataUiContractTests(unittest.TestCase):
         self.assertIn("text-overflow:ellipsis", css)
         self.assertIn("pageSize=8", app)
 
+    def test_session_intelligence_contract(self):
+        app = (ROOT / "app.js").read_text(encoding="utf-8")
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        css = (ROOT / "app.css").read_text(encoding="utf-8")
+
+        self.assertIn("function aggregateTaskTurns", app)
+        self.assertIn("contextGrowth", app)
+        self.assertIn("firstAvgInput", app)
+        self.assertIn("lastAvgInput", app)
+        self.assertIn("peakTurn", app)
+        self.assertIn("function classifySession", app)
+        self.assertIn("function renderSessionHealth", app)
+        self.assertIn("function contextGrowthChart", app)
+        self.assertIn('id="tokens-turn"', html)
+        self.assertIn('id="session-health-summary"', html)
+        self.assertIn('id="context-watch-list"', html)
+        self.assertIn(".context-chart", css)
+        self.assertIn(".health-chip", css)
+
 
 if __name__ == "__main__":
     unittest.main()

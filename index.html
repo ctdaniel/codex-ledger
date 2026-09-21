@@ -24,6 +24,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V4M16 19v-7M22 19V7"/></svg>
           <span>Models</span>
         </button>
+        <button class="nav-item" data-target="sessions">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V9M9 18V5M14 18v-6M19 18V8"/><path d="M3 21h18"/></svg>
+          <span>Sessions</span>
+        </button>
         <button class="nav-item" data-target="attribution">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h7l2 2h9v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7.5V5a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v2.5"/></svg>
           <span>Attribution</span>
@@ -114,12 +118,27 @@
         <div class="kpi-primary"><span>Total Tokens · Observed</span><strong id="total-tokens">—</strong><small id="total-detail">—</small></div>
         <div><span>Burn Rate · Calculated</span><strong id="burn-rate">—</strong><small id="burn-detail">—</small></div>
         <div><span>Tokens / Task · Calculated</span><strong id="tokens-task">—</strong><small id="tokens-task-detail">—</small></div>
+        <div><span>Tokens / Turn · Calculated</span><strong id="tokens-turn">—</strong><small id="tokens-turn-detail">—</small></div>
         <div><span>Cache Hit · Calculated</span><strong id="cache-rate">—</strong><small id="cache-detail">—</small></div>
       </section>
 
       <section class="panel insights-panel" aria-labelledby="insights-title">
         <header class="section-head compact"><div><h2 id="insights-title">Usage insights</h2><p>Generated from transparent rules using the current filters. Up to four insights.</p></div><span class="scope-label">Calculated · Current period</span></header>
         <div class="insights-list" id="usage-insights" aria-live="polite"></div>
+      </section>
+
+      <section class="session-grid" id="sessions" aria-label="Session health and context growth">
+        <article class="panel session-health-panel">
+          <header class="section-head compact"><div><h2 id="session-health-title">Session health</h2><p id="session-health-copy">Transparent status from context growth, turns, and tokens / turn.</p></div><span class="scope-label" id="session-health-scope">Calculated · Your baseline</span></header>
+          <div class="session-health-body">
+            <div class="health-summary" id="session-health-summary"></div>
+            <div class="baseline-summary" id="session-baseline-summary"></div>
+          </div>
+        </article>
+        <article class="panel context-watch-panel">
+          <header class="section-head compact"><div><h2 id="context-watch-title">Context growth watch</h2><p id="context-watch-copy">First 5 vs last 5 turns. Click a session for detail.</p></div><span class="scope-label">Observed + Calculated</span></header>
+          <div class="context-watch-list" id="context-watch-list"></div>
+        </article>
       </section>
 
       <section class="model-card" id="models" aria-labelledby="model-title">
@@ -189,7 +208,7 @@
 
       <section class="panel tasks-panel task-table-panel" aria-label="任务明细">
         <header class="section-head compact"><div><h2><span id="task-details-title">Task details</span> <small id="task-count"></small></h2><p>Open any task to inspect its consumption drivers and turns.</p></div><input id="task-search" type="search" placeholder="Search tasks or models" aria-label="Search tasks or models"></header>
-        <div class="table-scroll"><table><thead><tr><th>Task / Project</th><th>Model</th><th><button id="sort-tasks">Total tokens ↓</button></th><th>Tokens / Turn</th><th>Output speed</th><th>Cache</th><th>Driver</th></tr></thead><tbody id="task-table-body"></tbody></table></div>
+        <div class="table-scroll"><table><thead><tr><th>Task / Project</th><th>Model</th><th><button id="sort-tasks">Total tokens ↓</button></th><th>Tokens / Turn</th><th>Context growth</th><th>Cache</th><th>Health</th></tr></thead><tbody id="task-table-body"></tbody></table></div>
         <footer class="table-footer"><span id="table-status"></span><div><button id="previous-page" aria-label="Previous page">Previous</button><span id="page-number"></span><button id="next-page" aria-label="Next page">Next</button></div></footer>
       </section>
 
@@ -206,6 +225,6 @@
   <div class="toast" id="toast" role="status"></div>
   <!-- Optional local bridge emitted by the skill. It works from file:// where fetch() may be blocked. -->
   <script src="quota-snapshot.example.js?v=demo-1"></script>
-  <script src="app.js?v=codex-ledger-3"></script>
+  <script src="app.js?v=codex-ledger-4"></script>
 </body>
 </html>

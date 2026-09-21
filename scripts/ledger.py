@@ -296,9 +296,11 @@ def parse_session(path: Path, thread_names: dict[str, str], stats: ParseStats) -
                 record_index = len(records)
                 records.append({
                     "id": f"{sid}-{record_index + 1}",
+                    "timestamp": timestamp.isoformat().replace("+00:00", "Z"),
                     "date": timestamp.astimezone().date().isoformat(),
                     "time": timestamp.astimezone().strftime("%H:%M"),
                     "taskId": sid,
+                    "turnId": turn_id,
                     "task": thread_names.get(sid, short_session_name(sid)),
                     "project": project_name(session_cwd),
                     "model": current_model if current_model != "unknown" else session_model,
@@ -425,11 +427,13 @@ class LedgerRequestHandler(SimpleHTTPRequestHandler):
     refresh_callback = None
 
     def end_headers(self) -> None:
+        # Live Ledger data should never be stuck behind the browser cache.
         self.send_header("Cache-Control", "no-store, max-age=0")
         self.send_header("Pragma", "no-cache")
         super().end_headers()
 
     def log_message(self, format: str, *args: Any) -> None:
+        # Keep CLI output focused on Ledger status rather than every asset request.
         return
 
     def do_GET(self) -> None:
@@ -460,6 +464,8 @@ class LedgerRequestHandler(SimpleHTTPRequestHandler):
 
 def serve_report(output: Path, codex_home: Path, days: int | None, host: str, port: int, open_browser: bool) -> None:
     handler = partial(LedgerRequestHandler, directory=str(output))
+    # SimpleHTTPRequestHandler's partial keeps the subclass type, so attach the
+    # callback to the class rather than the partial object.
     LedgerRequestHandler.refresh_callback = lambda: refresh_report_data(output, codex_home, days)
     server = ThreadingHTTPServer((host, port), handler)
     actual_port = server.server_address[1]

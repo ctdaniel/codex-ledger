@@ -12,12 +12,12 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.3-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-111827.svg">
 </p>
 
 # Know where your Codex usage goes.
 
-**Ledger** is an open-source, local-first usage analytics dashboard for Codex. It turns the usage telemetry already persisted on your machine into a clear view of **tokens, projects, models, tasks, trends, cache efficiency, and observed quota windows**.
+**Ledger** is an open-source, local-first usage analytics dashboard for Codex. It turns the usage telemetry already persisted on your machine into a clear view of **tokens, projects, models, sessions, per-turn context growth, cache efficiency, trends, and observed quota windows**.
 
 No Ledger account. No cloud backend. No telemetry.
 
@@ -32,7 +32,7 @@ No Ledger account. No cloud backend. No telemetry.
 | How much have I used? | Total observable tokens + period comparison |
 | Am I consuming too fast? | Burn rate + observed quota-window pacing |
 | Where did it go? | Project, model, and model × project breakdowns |
-| Which tasks are expensive? | Top tasks, tokens / turn, cache hit, task drivers |
+| Why was a session so large? | Tokens / turn, context growth, peak turn, cache reuse, and transparent drivers |
 | What changed? | Previous-period deltas + rule-based usage insights |
 | Is the data leaving my machine? | No. Parsing and reports are local by default |
 
@@ -51,7 +51,7 @@ Codex can do a lot of work, but the raw usage trail is hard to reason about at a
 | Without Ledger | With Ledger |
 |---|---|
 | “Where did my usage go?” | Project and model attribution |
-| “Why was this session so large?” | Task-level token composition and drivers |
+| “Why was this session so large?” | Session health, context growth, peak turn, and transparent drivers |
 | “Is today unusual?” | Burn rate, outliers, and previous-period comparison |
 | “Did cache help?” | Cache hit and cached / uncached input breakdown |
 | “How much quota is left?” | Observed 5-hour / weekly snapshots when Codex persisted them |
@@ -70,7 +70,7 @@ Ledger does **not** invent an account quota from token totals. If Codex did not 
 
 - observable token totals
 - burn rate
-- tokens per task
+- tokens per session / turn
 - cache hit rate
 - previous-period comparison
 
@@ -90,13 +90,13 @@ Ledger does **not** invent an account quota from token totals. If Codex did not 
 <tr>
 <td width="50%" valign="top">
 
-### Find expensive tasks
+### Understand sessions
 
-- top expensive tasks
-- task efficiency map
 - tokens / turn
-- task detail drawer
-- transparent consumption drivers
+- first-vs-last context growth
+- peak turn detection
+- session health using your own baseline
+- session detail + transparent consumption drivers
 
 </td>
 <td width="50%" valign="top">
@@ -116,7 +116,7 @@ Ledger does **not** invent an account quota from token totals. If Codex did not 
 
 ## Install as a Codex Plugin · recommended
 
-Ledger is packaged as a portable Agent Plugin with a bundled `ledger-analysis` Skill. No MCP server or external account is required in v0.1.
+Ledger is packaged as a portable Agent Plugin with a bundled `ledger-analysis` Skill. No MCP server or external account is required in v0.2.
 
 ### 1. Add the GitHub marketplace
 
@@ -209,15 +209,19 @@ Ledger distinguishes three kinds of information:
 With the Plugin installed, try:
 
 ```text
-Which project consumed the most in the last 30 days?
+Why was my most expensive Codex session so large?
 ```
 
 ```text
-Which tasks had unusually high tokens per turn?
+Which sessions have the fastest context growth?
 ```
 
 ```text
-Did my cache hit rate improve versus the previous period?
+Did my tokens per turn increase versus the previous period?
+```
+
+```text
+Which long sessions also have unusually low cache reuse?
 ```
 
 ```text
@@ -261,10 +265,12 @@ The repository's demo data is synthetic. Files matching local report / snapshot 
 
 ## Data coverage & limitations
 
-Ledger v0.1.3 intentionally avoids pretending that local telemetry is a formal billing API.
+Ledger v0.2 intentionally avoids pretending that local telemetry is a formal billing or context-window API.
 
 - Codex's persisted local session format can evolve; the parser is best-effort and covered by fixtures/tests.
 - Sessions without persisted `last_token_usage` events cannot contribute token records.
+- Context Growth uses observed per-turn input tokens as a local proxy; it is **not** official context-window occupancy.
+- Session Health is relative to your own local usage distribution, not an external benchmark or a quality score.
 - Quota cards are shown only when a persisted `rate_limits` snapshot is observed.
 - Ledger never converts token totals into an invented 5-hour or weekly quota percentage.
 - Generation speed appears only when usable duration telemetry is present.
@@ -295,7 +301,7 @@ codex-ledger/
 └── assets/
 ```
 
-The Plugin is intentionally Skill-first in v0.1.3. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
+The Plugin is intentionally Skill-first in v0.2. A local MCP server is **not required** just to read files already available on your machine and render the dashboard.
 
 ---
 
@@ -316,21 +322,24 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and [docs/D
 
 ## Roadmap
 
-### Available in v0.1.3
+### Available in v0.2.0
 
-- [x] local Codex token parser
-- [x] project / model / task attribution
+- [x] local Codex token parser + live refresh
+- [x] project / model / session attribution
 - [x] burn rate, cache and period comparison
-- [x] top expensive tasks + task drivers
+- [x] tokens / session + tokens / turn
+- [x] session context-growth analysis (first vs last turns)
+- [x] peak-turn detection + session health using your own baseline
+- [x] Session Detail with context-growth chart and transparent drivers
+- [x] session-oriented insights
 - [x] observed quota snapshots when persisted locally
 - [x] bilingual dashboard
 - [x] Codex Plugin + Ledger Analysis Skill
 - [x] GitHub marketplace packaging
-- [x] live local refresh from the dashboard (`--open` / `--serve`)
 
 ### Planned
 
-- [ ] deeper session / context health
+- [ ] tool / file / MCP-call observability where local telemetry supports it
 - [ ] richer parser coverage diagnostics
 - [ ] exportable privacy-safe reports
 - [ ] optional local MCP interface if it materially improves the workflow

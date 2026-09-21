@@ -77,6 +77,8 @@ class LedgerParserTests(unittest.TestCase):
             self.assertEqual(sum(r["total"] for r in records), 3300)
             self.assertEqual(records[0]["project"], "codex-ledger")
             self.assertEqual(records[0]["task"], "Refactor dashboard")
+            self.assertEqual(records[0]["turnId"], "turn-1")
+            self.assertEqual(records[0]["timestamp"], "2026-09-19T01:00:02Z")
             self.assertNotIn("/synthetic/user", json.dumps(records))
             self.assertEqual(records[-1]["durationSeconds"], 3)
             self.assertEqual(records[-1]["speedOutput"], 300)
@@ -127,6 +129,8 @@ class LedgerParserTests(unittest.TestCase):
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()
             try:
+                # Add a token event *after* the initial report was built. The API
+                # must rescan the rollout rather than return the frozen snapshot.
                 rollout = next((home / "sessions").rglob("rollout-*.jsonl"))
                 extra = {
                     "timestamp": "2026-09-20T02:00:00Z",

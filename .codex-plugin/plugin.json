@@ -1,24 +1,25 @@
 {
   "name": "codex-ledger",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Local-first Codex usage analytics and observability.",
   "skills": "./skills/",
   "interface": {
     "displayName": "Ledger for Codex",
     "shortDescription": "See where Codex usage goes.",
-    "longDescription": "Generate a private local dashboard for Codex token usage, projects, models, tasks, trends, and observed quota snapshots.",
+    "longDescription": "Generate a private local dashboard for Codex usage, including projects, models, sessions, token trends, context-growth signals, and observed quota snapshots.",
     "developerName": "Daniel Chen",
     "category": "Developer Tools",
     "capabilities": [
       "Analyze local Codex usage",
-      "Open a private local usage dashboard",
-      "Compare projects, models, tasks, and trends"
+      "Inspect session and context-growth signals",
+      "Compare projects, models, tasks, trends, and expensive turns"
     ],
     "websiteURL": "https://github.com/ctdaniel/codex-ledger",
     "defaultPrompt": [
       "Open my Codex usage dashboard.",
       "Analyze my Codex usage for the last 7 days.",
-      "Show my most expensive Codex tasks."
+      "Which sessions have the fastest context growth?",
+      "Why was my most expensive Codex session so large?"
     ],
     "brandColor": "#0A84FF",
     "screenshots": [
