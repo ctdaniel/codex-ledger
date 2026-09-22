@@ -190,12 +190,29 @@ def parse_rate_window(value: Any, observed_at: datetime) -> dict[str, Any] | Non
     return result
 
 
-def quota_payload(observation: QuotaObservation | None) -> dict[str, Any] | None:
+def expire_rate_window(window: dict[str, Any] | None, now: datetime) -> dict[str, Any] | None:
+    """Hide a percentage once its observed reset boundary has passed.
+
+    Ledger cannot force Codex to query the account quota service. Keeping the old
+    percentage after the reset would be more misleading than marking it stale.
+    """
+    if not window:
+        return None
+    reset_dt = iso_dt(window.get("resetsAt"))
+    if not reset_dt or reset_dt > now:
+        return window
+    stale = dict(window)
+    stale.update({"used": None, "seconds": 0, "source": "stale", "stale": True})
+    return stale
+
+
+def quota_payload(observation: QuotaObservation | None, now: datetime | None = None) -> dict[str, Any] | None:
     if not observation:
         return None
+    current = now or datetime.now(timezone.utc)
     rate_limits = observation.rate_limits
-    primary = parse_rate_window(rate_limits.get("primary"), observation.observed_at)
-    secondary = parse_rate_window(rate_limits.get("secondary"), observation.observed_at)
+    primary = expire_rate_window(parse_rate_window(rate_limits.get("primary"), observation.observed_at), current)
+    secondary = expire_rate_window(parse_rate_window(rate_limits.get("secondary"), observation.observed_at), current)
     if not primary and not secondary:
         return None
     return {
@@ -405,7 +422,9 @@ def write_refresh_bridge(path: Path) -> None:
     const response = await fetch(`/api/refresh?ts=${Date.now()}`, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Ledger refresh failed (${response.status})`);
     const payload = await response.json();
-    return { reload: true, records: payload?.meta?.counts?.records ?? 0, generatedAt: payload?.meta?.generatedAt ?? null };
+    const windows=[payload?.quota?.five,payload?.quota?.week].filter(Boolean);
+    const quotaState=windows.some(item=>item?.source==='stale')?'stale':(windows.some(item=>item?.used!==null&&item?.used!==undefined)?'observed':'unavailable');
+    return { reload: true, records: payload?.meta?.counts?.records ?? 0, generatedAt: payload?.meta?.generatedAt ?? null, quotaState };
   };
 })();
 """,

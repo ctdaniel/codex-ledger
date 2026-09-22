@@ -2,6 +2,22 @@
 
 All notable changes to Ledger are documented here.
 
+## 0.2.1 — Quota clarity & stale-snapshot handling
+
+### Fixed
+
+- Quota cards now label the primary percentage explicitly as **used**, with remaining quota shown as secondary information.
+- Replaced the ambiguous **Estimated** badge with **Window snapshot** and clarified that quota values come from observed local rate-limit snapshots.
+- When an observed 5-hour or weekly reset boundary passes, Ledger now hides the old percentage instead of continuing to display a stale quota value.
+- Live reports no longer allow an older browser-local quota snapshot to override a newer stale/unavailable parser result.
+- **Refresh data** continues to rescan current local Codex telemetry. If Codex has persisted a new rate-limit snapshot, the same open Ledger page will pick it up; reopening the plugin is not required.
+- Refresh copy now explains the remaining limitation: Ledger cannot force Codex to query the account quota service. After a reset with no fresh snapshot yet, use Codex once and then refresh.
+
+### Improved
+
+- Reset countdown copy now reads naturally (`Resets now` / waiting for a fresh snapshot) instead of getting stuck at `00:00:00`.
+- Exported dashboard images handle stale/unavailable quota windows without rendering them as `0%`.
+
 ## 0.2.0 — Session & Context Intelligence
 
 ### Added

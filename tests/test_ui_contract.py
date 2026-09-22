@@ -32,6 +32,19 @@ class DenseDataUiContractTests(unittest.TestCase):
         self.assertIn("text-overflow:ellipsis", css)
         self.assertIn("pageSize=8", app)
 
+    def test_quota_cards_make_used_semantics_and_stale_state_explicit(self):
+        app = (ROOT / "app.js").read_text(encoding="utf-8")
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+
+        self.assertIn('id="five-used-label">% used</small>', html)
+        self.assertIn('id="week-used-label">% used</small>', html)
+        self.assertIn("Account-wide · Observed window", html)
+        self.assertIn("Window snapshot", html)
+        self.assertIn("function expireQuotaSnapshotsNow", app)
+        self.assertIn("old percentage hidden", app)
+        self.assertIn("cannot force an account sync", app)
+        self.assertIn("IS_LIVE_REPORT?sidecarQuota", app)
+
     def test_session_intelligence_contract(self):
         app = (ROOT / "app.js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")

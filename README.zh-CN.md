@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.2.1-111827.svg">
 </p>
 
 # 看清你的 Codex 用量到底去哪了。
@@ -325,6 +325,7 @@ Ledger v0.2 不会把“本地 Telemetry”假装成正式 Billing API 或官方
 - Context 增长使用每轮可观测输入 Token 作为本地代理指标，**不等于官方 Context Window 占用率**。
 - Session Health 只相对你自己的本地使用分布判断，不是行业 Benchmark，也不是质量评分。
 - 只有观察到本地 `rate_limits` Snapshot 时才展示额度卡片。
+- **刷新数据** 只能重新扫描 Codex 已经持久化到本机的额度快照，无法强制 Codex 向账户额度服务发起同步。观测到的重置时间一旦过去，Ledger 会隐藏旧百分比，避免继续展示过期额度；先使用一次 Codex，再点击 **刷新数据** 即可读取下一份新快照。
 - 不会根据 Token 总量虚构 5 小时 / 每周额度百分比。
 - 只有存在可用 Duration Telemetry 时才展示生成速度。
 - 只有当前模型存在内置费率映射时才展示模型费率权重估算，否则显示不可用。
@@ -373,7 +374,7 @@ python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 
 ## Roadmap
 
-### v0.2.0 已有
+### v0.2.1 已有
 
 - [x] Codex 本地 Token Parser + 实时刷新
 - [x] 项目 / 模型 / Session 归因

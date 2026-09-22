@@ -111,8 +111,8 @@ let toastTimer = null;
 
 const $ = id => document.getElementById(id);
 const COPY = {
-  en:{vsPrevious:'vs previous period',newLabel:'New',allProjects:'All projects',allTasks:'All tasks',allModels:'All models',dayAverage:n=>`${n}-day selected-period average`,tasksTurns:(tasks,turns)=>`${tasks} tasks / ${turns} turns`,cached:v=>`${v} cached`,perDay:v=>`${v} / Day`,turnCount:n=>`${n} turns`,quotaFresh:'Observed quota snapshot · updated just now',quotaDemo:'Observed quota snapshot · demo data',quotaUnchanged:'Account quota snapshot unchanged · no live quota source returned',quotaUpdated:'Account quota snapshot updated',quotaNote:'Account quota cards update when a fresh quota snapshot is available.',modelNote:'Starting a new Codex task to run this skill does use the model selected for that task.',liveBadge:'Live snapshot',demoBadge:'Demo data',noData:'No data for the current filters.',noProjectData:'No project data for the current filters.',adjustFilters:'Adjust the filters to see results.',projects:n=>`${n} projects`,topShare:p=>`Top 3 account for ${p} of current usage.`,showing:(a,b,n)=>`Showing ${a}–${b} / ${n}`,notAvailable:'Unavailable',estimatedRate:(credits,relative)=>`Estimated ${credits} cr · rate weight ${relative}× Luna`,turnsOutput:(turns,output)=>`${turns} turns · ${output} output`,quotaFast:'Short-window pace is high',quotaBody:'The 5-hour window is ahead of elapsed time; weekly pacing remains normal. Quota snapshots are independent of the token filters below.',growthTitle:p=>`${p} usage increased`,growthBody:(change,model)=>`Up ${change}% from the previous period, led by ${model}.`,expensiveTitle:'High-usage task found',expensiveBody:(task,tokens,share)=>`“${task}” used ${tokens} tokens, ${share} of the current period.`,concentrationTitle:m=>`${m} usage is concentrated`,concentrationBody:share=>`This model accounts for ${share} of current-period tokens.`,cacheUp:'Cache efficiency improved',cacheDown:'Cache hit declined',cacheBody:(from,verb,to)=>`Cache Hit ${verb} from ${from} to ${to}.`,rose:'rose',fell:'fell',noAnomaly:'No notable usage anomalies in the current filters.',previousDay:'Previous period',compare:'Compare',invalidDates:'Start date cannot be later than end date',cachedInput:'Cached input',uncachedInput:'Uncached input',output:'Output',quotaIntensity:'Quota intensity',speedRanking:'Generation speed',driverTotal:n=>`Total usage is among the current top ${n}`,driverDuration:v=>`Cumulative generation time: ${v}`,driverCache:v=>`Cache hit is only ${v}`,driverOutput:'Output share is high for the current task set',driverTurn:x=>`Tokens per turn are ${x}× your current median`,driverLongSession:n=>`${n} turns, above the long-session threshold`,driverContextGrowth:x=>`Recent input context is ${x}× the opening-turn baseline`,driverCacheCompare:(value,median)=>`Cache hit is ${value} vs your ${median} median`,driverPeakTurn:(turn,tokens)=>`Turn ${turn} peaked at ${tokens} tokens`,driverNormal:'No notable session driver was triggered',sessionStable:'Stable',sessionGrowing:'Growing',sessionHeavy:'Heavy',sessionLimited:'Limited data',contextInsightTitle:'Context growth detected',contextInsightBody:(count,max)=>`${count} sessions show elevated context growth; the highest reached ${max}×.`,turnRateUp:'Tokens / turn increased',turnRateDown:'Tokens / turn decreased',turnRateBody:(change,current)=>`${change}% vs the previous period · ${current} per turn.`,topCurrent:'Top 5 in the current period.',resetToast:'Reset to last 7 days · all projects and models',exportToast:'Exported dashboard image · PNG',exportSvgFallback:'Exported dashboard image · SVG',exporting:'Exporting…',exportError:'Image export failed · please try again',refreshing:'Refreshing…',refreshData:'Refresh data',refreshDone:n=>`Local refresh complete · ${n} records · no model quota used`,refreshDoneNoQuota:n=>`Local refresh complete · ${n} records · quota snapshot unchanged`,refreshDoneWithQuota:n=>`Local refresh complete · ${n} records · quota snapshot updated`,reduceMotion:'Reduce motion',restoreMotion:'Restore motion',totalTokens:'Total tokens',previous:'Previous',next:'Next',sortTokens:'Total tokens',matrixCompact:'Compact',matrixAll:'Show all',matrixCompactScope:(projects,models)=>`Top ${projects} projects · Top ${models} models`,matrixAllScope:(projects,models)=>`All ${projects} projects · ${models} models`,matrixEmpty:'No model × project usage for the current filters.',noUsage:'No usage'},
-  zh:{vsPrevious:'较上一周期',newLabel:'新增',allProjects:'所有项目',allTasks:'所有任务',allModels:'所有模型',dayAverage:n=>`所选 ${n} 天日均`,tasksTurns:(tasks,turns)=>`${tasks} 个 Session / ${turns} 轮`,cached:v=>`已缓存 ${v}`,perDay:v=>`${v} / 天`,turnCount:n=>`${n} 轮`,quotaFresh:'额度快照 · 刚刚更新',quotaDemo:'额度快照 · 演示数据',quotaUnchanged:'账户额度快照未变化 · 未返回实时额度来源',quotaUpdated:'账户额度快照已更新',quotaNote:'有新的额度快照时，5 小时和周额度卡片会同步更新。',modelNote:'重新发起 Codex 任务运行此 Skill 时，会使用该任务当前选择的模型。',liveBadge:'实时快照',demoBadge:'演示数据',noData:'当前筛选条件下暂无任务数据。',noProjectData:'当前筛选条件下暂无项目数据。',adjustFilters:'调整筛选条件后再查看。',projects:n=>`${n} 个项目`,topShare:p=>`前 3 项占当前总量 ${p}。`,showing:(a,b,n)=>`显示 ${a}–${b} / ${n}`,notAvailable:'不可用',estimatedRate:(credits,relative)=>`估算 ${credits} cr · 费率权重 ${relative}× Luna`,turnsOutput:(turns,output)=>`${turns} 轮 · ${output} 输出`,quotaFast:'短窗口使用较快',quotaBody:'当前 5h 窗口进度高于时间进度；每周窗口节奏仍正常。额度快照与下方 Token 筛选独立。',growthTitle:p=>`${p} 消耗增长明显`,growthBody:(change,model)=>`较上一周期增加 ${change}%，主要来自 ${model}。`,expensiveTitle:'发现高消耗任务',expensiveBody:(task,tokens,share)=>`“${task}”消耗 ${tokens} Tokens，占当前周期 ${share}。`,concentrationTitle:m=>`${m} 使用集中`,concentrationBody:share=>`该模型占当前周期 Token 的 ${share}。`,cacheUp:'缓存效率改善',cacheDown:'缓存命中下降',cacheBody:(from,verb,to)=>`缓存命中率从 ${from} ${verb}至 ${to}。`,rose:'提升',fell:'下降',noAnomaly:'当前没有明显异常消耗。',previousDay:'上一周期',compare:'对比',invalidDates:'开始日期不能晚于结束日期',cachedInput:'缓存输入',uncachedInput:'非缓存输入',output:'输出',quotaIntensity:'额度消耗强度',speedRanking:'生成速度排名',driverTotal:n=>`总量位于当前任务 Top ${n}`,driverDuration:v=>`累计生成时长 ${v}`,driverCache:v=>`缓存命中率仅 ${v}`,driverOutput:'输出占比位于当前任务高位',driverTurn:x=>`单轮 Token 约为当前中位数 ${x}×`,driverLongSession:n=>`${n} 轮，超过长 Session 阈值`,driverContextGrowth:x=>`最近输入 Context 约为开头基线的 ${x}×`,driverCacheCompare:(value,median)=>`缓存命中 ${value}，当前中位数为 ${median}`,driverPeakTurn:(turn,tokens)=>`第 ${turn} 轮达到峰值 ${tokens} Tokens`,driverNormal:'当前 Session 未触发明显消耗特征',sessionStable:'稳定',sessionGrowing:'增长中',sessionHeavy:'偏重',sessionLimited:'数据不足',contextInsightTitle:'发现 Context 增长',contextInsightBody:(count,max)=>`${count} 个 Session 出现明显 Context 增长，最高达到 ${max}×。`,turnRateUp:'单轮 Token 上升',turnRateDown:'单轮 Token 下降',turnRateBody:(change,current)=>`较上一周期变化 ${change}% · 当前每轮 ${current}。`,topCurrent:'当前周期前 5 项。',resetToast:'已恢复近 7 天 · 所有项目与模型',exportToast:'已导出看板图片 · PNG',exportSvgFallback:'已导出看板图片 · SVG',exporting:'导出中…',exportError:'图片导出失败 · 请重试',refreshing:'刷新中…',refreshData:'刷新数据',refreshDone:n=>`本地刷新完成 · ${n} 条记录 · 未消耗模型额度`,refreshDoneNoQuota:n=>`本地刷新完成 · ${n} 条记录 · 额度快照未变化`,refreshDoneWithQuota:n=>`本地刷新完成 · ${n} 条记录 · 额度快照已更新`,reduceMotion:'减少动态效果',restoreMotion:'恢复动态效果',totalTokens:'Token 总量',previous:'上一页',next:'下一页',sortTokens:'Token 总量',matrixCompact:'精简',matrixAll:'全部',matrixCompactScope:(projects,models)=>`Top ${projects} 项目 · Top ${models} 模型`,matrixAllScope:(projects,models)=>`全部 ${projects} 项目 · ${models} 模型`,matrixEmpty:'当前筛选范围内暂无模型 × 项目用量。',noUsage:'无用量'}
+  en:{vsPrevious:'vs previous period',newLabel:'New',allProjects:'All projects',allTasks:'All tasks',allModels:'All models',dayAverage:n=>`${n}-day selected-period average`,tasksTurns:(tasks,turns)=>`${tasks} tasks / ${turns} turns`,cached:v=>`${v} cached`,perDay:v=>`${v} / Day`,turnCount:n=>`${n} turns`,quotaFresh:'Observed quota snapshot · updated just now',quotaDemo:'Observed quota snapshot · demo data',quotaUnchanged:'Account quota snapshot unchanged · no live quota source returned',quotaUpdated:'Account quota snapshot updated',quotaNote:'Refresh rescans quota snapshots already persisted by Codex; it cannot force an account sync. After a reset, use Codex once, then Refresh again.',modelNote:'Starting a new Codex task to run this skill does use the model selected for that task.',liveBadge:'Live snapshot',demoBadge:'Demo data',noData:'No data for the current filters.',noProjectData:'No project data for the current filters.',adjustFilters:'Adjust the filters to see results.',projects:n=>`${n} projects`,topShare:p=>`Top 3 account for ${p} of current usage.`,showing:(a,b,n)=>`Showing ${a}–${b} / ${n}`,notAvailable:'Unavailable',estimatedRate:(credits,relative)=>`Estimated ${credits} cr · rate weight ${relative}× Luna`,turnsOutput:(turns,output)=>`${turns} turns · ${output} output`,quotaFast:'Short-window pace is high',quotaBody:'The 5-hour window is ahead of elapsed time; weekly pacing remains normal. Quota snapshots are independent of the token filters below.',growthTitle:p=>`${p} usage increased`,growthBody:(change,model)=>`Up ${change}% from the previous period, led by ${model}.`,expensiveTitle:'High-usage task found',expensiveBody:(task,tokens,share)=>`“${task}” used ${tokens} tokens, ${share} of the current period.`,concentrationTitle:m=>`${m} usage is concentrated`,concentrationBody:share=>`This model accounts for ${share} of current-period tokens.`,cacheUp:'Cache efficiency improved',cacheDown:'Cache hit declined',cacheBody:(from,verb,to)=>`Cache Hit ${verb} from ${from} to ${to}.`,rose:'rose',fell:'fell',noAnomaly:'No notable usage anomalies in the current filters.',previousDay:'Previous period',compare:'Compare',invalidDates:'Start date cannot be later than end date',cachedInput:'Cached input',uncachedInput:'Uncached input',output:'Output',quotaIntensity:'Quota intensity',speedRanking:'Generation speed',driverTotal:n=>`Total usage is among the current top ${n}`,driverDuration:v=>`Cumulative generation time: ${v}`,driverCache:v=>`Cache hit is only ${v}`,driverOutput:'Output share is high for the current task set',driverTurn:x=>`Tokens per turn are ${x}× your current median`,driverLongSession:n=>`${n} turns, above the long-session threshold`,driverContextGrowth:x=>`Recent input context is ${x}× the opening-turn baseline`,driverCacheCompare:(value,median)=>`Cache hit is ${value} vs your ${median} median`,driverPeakTurn:(turn,tokens)=>`Turn ${turn} peaked at ${tokens} tokens`,driverNormal:'No notable session driver was triggered',sessionStable:'Stable',sessionGrowing:'Growing',sessionHeavy:'Heavy',sessionLimited:'Limited data',contextInsightTitle:'Context growth detected',contextInsightBody:(count,max)=>`${count} sessions show elevated context growth; the highest reached ${max}×.`,turnRateUp:'Tokens / turn increased',turnRateDown:'Tokens / turn decreased',turnRateBody:(change,current)=>`${change}% vs the previous period · ${current} per turn.`,topCurrent:'Top 5 in the current period.',resetToast:'Reset to last 7 days · all projects and models',exportToast:'Exported dashboard image · PNG',exportSvgFallback:'Exported dashboard image · SVG',exporting:'Exporting…',exportError:'Image export failed · please try again',refreshing:'Refreshing…',refreshData:'Refresh data',refreshDone:n=>`Local refresh complete · ${n} records · no model quota used`,refreshDoneNoQuota:n=>`Local refresh complete · ${n} records · quota snapshot unchanged`,refreshDoneWithQuota:n=>`Local refresh complete · ${n} records · quota snapshot updated`,reduceMotion:'Reduce motion',restoreMotion:'Restore motion',totalTokens:'Total tokens',previous:'Previous',next:'Next',sortTokens:'Total tokens',matrixCompact:'Compact',matrixAll:'Show all',matrixCompactScope:(projects,models)=>`Top ${projects} projects · Top ${models} models`,matrixAllScope:(projects,models)=>`All ${projects} projects · ${models} models`,matrixEmpty:'No model × project usage for the current filters.',noUsage:'No usage'},
+  zh:{vsPrevious:'较上一周期',newLabel:'新增',allProjects:'所有项目',allTasks:'所有任务',allModels:'所有模型',dayAverage:n=>`所选 ${n} 天日均`,tasksTurns:(tasks,turns)=>`${tasks} 个 Session / ${turns} 轮`,cached:v=>`已缓存 ${v}`,perDay:v=>`${v} / 天`,turnCount:n=>`${n} 轮`,quotaFresh:'额度快照 · 刚刚更新',quotaDemo:'额度快照 · 演示数据',quotaUnchanged:'账户额度快照未变化 · 未返回实时额度来源',quotaUpdated:'账户额度快照已更新',quotaNote:'刷新只能重新读取 Codex 已写入本机的额度快照，不能强制账户侧同步。额度重置后先使用一次 Codex，再点刷新即可读取新的快照。',modelNote:'重新发起 Codex 任务运行此 Skill 时，会使用该任务当前选择的模型。',liveBadge:'实时快照',demoBadge:'演示数据',noData:'当前筛选条件下暂无任务数据。',noProjectData:'当前筛选条件下暂无项目数据。',adjustFilters:'调整筛选条件后再查看。',projects:n=>`${n} 个项目`,topShare:p=>`前 3 项占当前总量 ${p}。`,showing:(a,b,n)=>`显示 ${a}–${b} / ${n}`,notAvailable:'不可用',estimatedRate:(credits,relative)=>`估算 ${credits} cr · 费率权重 ${relative}× Luna`,turnsOutput:(turns,output)=>`${turns} 轮 · ${output} 输出`,quotaFast:'短窗口使用较快',quotaBody:'当前 5h 窗口进度高于时间进度；每周窗口节奏仍正常。额度快照与下方 Token 筛选独立。',growthTitle:p=>`${p} 消耗增长明显`,growthBody:(change,model)=>`较上一周期增加 ${change}%，主要来自 ${model}。`,expensiveTitle:'发现高消耗任务',expensiveBody:(task,tokens,share)=>`“${task}”消耗 ${tokens} Tokens，占当前周期 ${share}。`,concentrationTitle:m=>`${m} 使用集中`,concentrationBody:share=>`该模型占当前周期 Token 的 ${share}。`,cacheUp:'缓存效率改善',cacheDown:'缓存命中下降',cacheBody:(from,verb,to)=>`缓存命中率从 ${from} ${verb}至 ${to}。`,rose:'提升',fell:'下降',noAnomaly:'当前没有明显异常消耗。',previousDay:'上一周期',compare:'对比',invalidDates:'开始日期不能晚于结束日期',cachedInput:'缓存输入',uncachedInput:'非缓存输入',output:'输出',quotaIntensity:'额度消耗强度',speedRanking:'生成速度排名',driverTotal:n=>`总量位于当前任务 Top ${n}`,driverDuration:v=>`累计生成时长 ${v}`,driverCache:v=>`缓存命中率仅 ${v}`,driverOutput:'输出占比位于当前任务高位',driverTurn:x=>`单轮 Token 约为当前中位数 ${x}×`,driverLongSession:n=>`${n} 轮，超过长 Session 阈值`,driverContextGrowth:x=>`最近输入 Context 约为开头基线的 ${x}×`,driverCacheCompare:(value,median)=>`缓存命中 ${value}，当前中位数为 ${median}`,driverPeakTurn:(turn,tokens)=>`第 ${turn} 轮达到峰值 ${tokens} Tokens`,driverNormal:'当前 Session 未触发明显消耗特征',sessionStable:'稳定',sessionGrowing:'增长中',sessionHeavy:'偏重',sessionLimited:'数据不足',contextInsightTitle:'发现 Context 增长',contextInsightBody:(count,max)=>`${count} 个 Session 出现明显 Context 增长，最高达到 ${max}×。`,turnRateUp:'单轮 Token 上升',turnRateDown:'单轮 Token 下降',turnRateBody:(change,current)=>`较上一周期变化 ${change}% · 当前每轮 ${current}。`,topCurrent:'当前周期前 5 项。',resetToast:'已恢复近 7 天 · 所有项目与模型',exportToast:'已导出看板图片 · PNG',exportSvgFallback:'已导出看板图片 · SVG',exporting:'导出中…',exportError:'图片导出失败 · 请重试',refreshing:'刷新中…',refreshData:'刷新数据',refreshDone:n=>`本地刷新完成 · ${n} 条记录 · 未消耗模型额度`,refreshDoneNoQuota:n=>`本地刷新完成 · ${n} 条记录 · 额度快照未变化`,refreshDoneWithQuota:n=>`本地刷新完成 · ${n} 条记录 · 额度快照已更新`,reduceMotion:'减少动态效果',restoreMotion:'恢复动态效果',totalTokens:'Token 总量',previous:'上一页',next:'下一页',sortTokens:'Token 总量',matrixCompact:'精简',matrixAll:'全部',matrixCompactScope:(projects,models)=>`Top ${projects} 项目 · Top ${models} 模型`,matrixAllScope:(projects,models)=>`全部 ${projects} 项目 · ${models} 模型`,matrixEmpty:'当前筛选范围内暂无模型 × 项目用量。',noUsage:'无用量'}
 };
 const t = (key,...args) => { const value=COPY[state.language][key]; return typeof value==='function'?value(...args):value; };
 const sum = (rows,key) => rows.reduce((total,row) => total + (Number(row[key]) || 0),0);
@@ -249,19 +249,25 @@ function calculateTaskDrivers(tasks) {
 }
 
 function normalizeQuotaWindow(value,fallback){
-  const hasUsed=value?.used!==null&&value?.used!==undefined&&Number.isFinite(Number(value.used));
+  const hasValue=value&&typeof value==='object';
+  const hasUsedField=Boolean(hasValue&&Object.prototype.hasOwnProperty.call(value,'used'));
+  const numericUsed=Number(value?.used);
+  const hasUsed=hasUsedField&&value?.used!==null&&value?.used!==undefined&&Number.isFinite(numericUsed);
   const hasElapsed=value?.elapsed!==null&&value?.elapsed!==undefined&&Number.isFinite(Number(value.elapsed));
-  const used=hasUsed?Number(value.used):null, seconds=Number(value?.seconds), elapsed=hasElapsed?Number(value.elapsed):null;
+  const seconds=Number(value?.seconds),elapsed=hasElapsed?Number(value.elapsed):null;
   const resetRaw=value?.resetsAt;
   const resetMs=typeof resetRaw==='number'?(resetRaw<1e12?resetRaw*1000:resetRaw):Date.parse(resetRaw||'');
+  const expired=Number.isFinite(resetMs)&&resetMs<=Date.now();
+  const stale=expired||value?.stale===true||value?.source==='stale';
   const liveSeconds=Number.isFinite(resetMs)?Math.max(0,Math.floor((resetMs-Date.now())/1000)):seconds;
   return {
     ...fallback,
     ...(value||{}),
-    used:used!==null?Math.max(0,Math.min(100,used)):fallback.used,
-    seconds:Number.isFinite(liveSeconds)?liveSeconds:fallback.seconds,
-    elapsed:elapsed!==null?Math.max(0,Math.min(100,elapsed)):fallback.elapsed,
-    source:value?.source||fallback.source||'unknown'
+    used:stale?null:(hasUsed?Math.max(0,Math.min(100,numericUsed)):(hasUsedField?null:(fallback?.used??null))),
+    seconds:stale?0:(Number.isFinite(liveSeconds)?liveSeconds:(fallback?.seconds??0)),
+    elapsed:elapsed!==null?Math.max(0,Math.min(100,elapsed)):(fallback?.elapsed??null),
+    source:stale?'stale':(value?.source||fallback?.source||'unknown'),
+    stale
   };
 }
 function snapshotTime(value){
@@ -274,6 +280,9 @@ function readStoredQuota(){
     const stored=window.localStorage?.getItem(QUOTA_STORAGE_KEY);
     return stored?JSON.parse(stored):null;
   }catch(error){ return null; }
+}
+function clearStoredQuota(){
+  try{ window.localStorage?.removeItem(QUOTA_STORAGE_KEY); }catch(error){ /* Storage may be unavailable. */ }
 }
 function persistQuotaSnapshot(value,observedAt){
   try{
@@ -304,13 +313,54 @@ function applyQuotaSnapshot(value,options={}){
     five:normalizeQuotaWindow(value.five,quotaSnapshot.five),
     week:normalizeQuotaWindow(value.week,quotaSnapshot.week)
   };
-  const unchanged=quotaObservedAt===observedAt&&next.five.used===quotaSnapshot.five.used&&next.week.used===quotaSnapshot.week.used&&next.five.resetsAt===quotaSnapshot.five.resetsAt&&next.week.resetsAt===quotaSnapshot.week.resetsAt;
+  const unchanged=quotaObservedAt===observedAt&&next.five.used===quotaSnapshot.five.used&&next.week.used===quotaSnapshot.week.used&&next.five.resetsAt===quotaSnapshot.five.resetsAt&&next.week.resetsAt===quotaSnapshot.week.resetsAt&&next.five.source===quotaSnapshot.five.source&&next.week.source===quotaSnapshot.week.source;
   quotaSnapshot=next;
   quotaObservedAt=observedAt;
   quotaRefreshState='updated';
   quotaStarted=Date.now();
-  if(options.persist!==false)persistQuotaSnapshot(value,observedAt);
+  if(options.persist!==false){
+    const bothStaleOrMissing=['five','week'].every(key=>['stale','unavailable'].includes(next[key]?.source)||next[key]?.used===null);
+    if(bothStaleOrMissing)clearStoredQuota();
+    else persistQuotaSnapshot({source:value.source,five:next.five,week:next.week},observedAt);
+  }
   return !unchanged;
+}
+function quotaRemainingSeconds(item){
+  const resetMs=Date.parse(item?.resetsAt||'');
+  if(Number.isFinite(resetMs))return Math.floor((resetMs-Date.now())/1000);
+  return Number(item?.seconds||0)-Math.floor((Date.now()-quotaStarted)/1000);
+}
+function expireQuotaSnapshotsNow(){
+  let changed=false;
+  ['five','week'].forEach(key=>{
+    const item=quotaSnapshot[key],resetMs=Date.parse(item?.resetsAt||'');
+    if(item&&item.source!=='stale'&&item.source!=='unavailable'&&Number.isFinite(resetMs)&&resetMs<=Date.now()){
+      item.used=null;item.seconds=0;item.source='stale';item.stale=true;changed=true;
+    }
+  });
+  if(changed)clearStoredQuota();
+  return changed;
+}
+function updateQuotaCountdown(prefix,item,long=false){
+  const zh=state.language==='zh',label=$(prefix+'-reset-label'),countdown=$(prefix+'-countdown');
+  if(item?.source==='stale'||item?.stale){
+    label.textContent=zh?'窗口已重置 · ':'Window reset · ';
+    countdown.textContent=zh?'等待新快照':'awaiting fresh snapshot';
+    return;
+  }
+  if(item?.source==='unavailable'||item?.used===null||item?.used===undefined){
+    label.textContent=zh?'重置时间 ':'Reset ';
+    countdown.textContent='—';
+    return;
+  }
+  const remaining=quotaRemainingSeconds(item);
+  if(remaining<=0){
+    label.textContent=zh?'重置 ':'Resets ';
+    countdown.textContent=zh?'现在':'now';
+    return;
+  }
+  label.textContent=zh?'重置倒计时 ':'Resets in ';
+  countdown.textContent=formatCountdown(remaining,long);
 }
 async function loadQuotaSidecar(){
   const scriptUpdated=await new Promise(resolve=>{
@@ -334,6 +384,8 @@ async function loadQuotaSidecar(){
 function quotaPacingInsight(){
   const five=quotaSnapshot.five,week=quotaSnapshot.week,zh=state.language==='zh';
   const available=item=>item&&item.used!==null&&item.used!==undefined&&Number.isFinite(Number(item.used));
+  const stale=item=>item?.source==='stale'||item?.stale===true;
+  if(stale(five)||stale(week)) return {tone:'neutral',title:zh?'额度窗口已重置':'Quota window reset',body:zh?'Ledger 已隐藏过期百分比。刷新只能读取 Codex 已持久化的快照；先使用一次 Codex，再点击刷新即可载入新的额度快照。':'Ledger hid the expired percentage. Refresh can only read snapshots already persisted by Codex; use Codex once, then click Refresh to load the next quota snapshot.'};
   if(!available(five)&&!available(week)) return {tone:'neutral',title:zh?'额度快照不可用':'Quota snapshot unavailable',body:zh?'本地 Token 记录不能推算官方 5 小时或每周额度；等待 Codex 日志中出现可观测的 rate-limit 快照。':'Local token records cannot infer official 5-hour or weekly quota. Ledger will use a recorded rate-limit snapshot when Codex persists one.'};
   const delta=item=>available(item)&&Number.isFinite(Number(item.elapsed))?Number(item.used)-Number(item.elapsed):null;
   const fiveDelta=delta(five),weekDelta=delta(week);
@@ -343,31 +395,42 @@ function quotaPacingInsight(){
 }
 function renderQuota(){
   const zh=state.language==='zh', five=quotaSnapshot.five, week=quotaSnapshot.week;
-  const available=item=>item&&item.used!==null&&item.used!==undefined&&Number.isFinite(Number(item.used))&&item.source!=='unavailable';
-  const update=(prefix,item,windowLabel)=>{
-    const meter=$(prefix+'-meter');
+  const available=item=>item&&item.used!==null&&item.used!==undefined&&Number.isFinite(Number(item.used))&&!['unavailable','stale'].includes(item.source);
+  const stale=item=>item?.source==='stale'||item?.stale===true;
+  const update=(prefix,item,windowLabel,long=false)=>{
+    const meter=$(prefix+'-meter'),usedLabel=$(prefix+'-used-label'),badge=$(prefix+'-snapshot-badge'),estimate=$(prefix+'-estimate-copy');
+    if(stale(item)){
+      $(prefix+'-used').textContent='—';if(usedLabel)usedLabel.textContent='';
+      $(prefix+'-usage-copy').textContent=zh?'窗口已重置 · 旧百分比已隐藏':'Window reset · old percentage hidden';
+      meter.removeAttribute('aria-valuenow');meter.querySelector('i').style.setProperty('--quota','0');
+      if(badge)badge.textContent=zh?'快照已过期':'Stale snapshot';
+      if(estimate)estimate.textContent=zh?'先使用一次 Codex，再点击刷新读取新的额度快照':'Use Codex once, then Refresh to read the next quota snapshot';
+      updateQuotaCountdown(prefix,item,long);return;
+    }
     if(!available(item)){
-      $(prefix+'-used').textContent='—';
+      $(prefix+'-used').textContent='—';if(usedLabel)usedLabel.textContent='';
       $(prefix+'-usage-copy').textContent=zh?'未观测到官方额度快照':'Official quota snapshot not observed';
       meter.removeAttribute('aria-valuenow');meter.querySelector('i').style.setProperty('--quota','0');
-      $(prefix+'-countdown').textContent='—';
-      return;
+      if(badge)badge.textContent=zh?'窗口快照':'Window snapshot';
+      if(estimate)estimate.textContent=zh?'等待 Codex 写入可观测额度快照':'Waiting for Codex to persist an observed quota snapshot';
+      updateQuotaCountdown(prefix,item,long);return;
     }
     const used=Math.round(Number(item.used)), left=Math.max(0,100-used);
-    $(prefix+'-used').textContent=String(used); $(prefix+'-usage-copy').textContent=zh?`已使用 ${used}% · 剩余 ${left}%`:`${used}% used · ${left}% left`;
-    meter.setAttribute('aria-label',zh?`${windowLabel}已使用 ${used}%`:`${windowLabel} ${used}% used`); meter.setAttribute('aria-valuenow',String(used)); meter.querySelector('i').style.setProperty('--quota',String(used/100));
+    $(prefix+'-used').textContent=String(used);if(usedLabel)usedLabel.textContent=zh?'% 已使用':'% used';
+    $(prefix+'-usage-copy').textContent=zh?`${left}% 剩余`:`${left}% remaining`;
+    meter.setAttribute('aria-label',zh?`${windowLabel}已使用 ${used}%`:`${windowLabel} ${used}% used`);meter.setAttribute('aria-valuenow',String(used));meter.querySelector('i').style.setProperty('--quota',String(used/100));
+    if(badge)badge.textContent=zh?'窗口快照':'Window snapshot';
+    if(estimate)estimate.textContent=zh?'来自本地可观测窗口，不由 Token 总量反推':'Observed locally; never inferred from token totals';
+    updateQuotaCountdown(prefix,item,long);
   };
-  update('five',five,zh?'五小时额度':'Five-hour quota'); update('week',week,zh?'每周额度':'Weekly quota');
-  const live=five.source==='live'||week.source==='live';
-  const source=quotaRefreshState==='unchanged'?t('quotaUnchanged'):(live?t('quotaFresh'):(IS_LIVE_REPORT?(zh?'本地用量已载入 · 官方额度快照不可用':'Local usage loaded · official quota snapshot unavailable'):t('quotaDemo')));
+  update('five',five,zh?'五小时额度':'Five-hour quota');update('week',week,zh?'每周额度':'Weekly quota',true);
+  const live=five.source==='live'||week.source==='live',hasStale=stale(five)||stale(week);
+  const source=hasStale?(zh?'额度窗口已重置 · 等待新的 Codex 快照':'Quota window reset · waiting for a fresh Codex snapshot'):(quotaRefreshState==='unchanged'?t('quotaUnchanged'):(live?t('quotaFresh'):(IS_LIVE_REPORT?(zh?'本地用量已载入 · 官方额度快照不可用':'Local usage loaded · official quota snapshot unavailable'):t('quotaDemo'))));
   $('quota-source').textContent=source;
   $('mode-badge').textContent=(live||IS_LIVE_REPORT)?t('liveBadge'):t('demoBadge');
   const pacing=quotaPacingInsight();
   const advice=$('.quota-advice');
   if(advice){advice.classList.toggle('healthy',pacing.tone==='green');const strong=advice.querySelector('strong'),body=advice.querySelector('p');if(strong)strong.textContent=pacing.title;if(body)body.textContent=pacing.body;}
-  const fiveEstimate=$('five-estimate-copy'),weekEstimate=$('week-estimate-copy');
-  if(fiveEstimate)fiveEstimate.textContent=available(five)?(zh?'基于已观测窗口进度，不由 Token 总量反推':'Based on the observed window; never inferred from token totals'):(zh?'等待可观测额度快照':'Waiting for an observed quota snapshot');
-  if(weekEstimate)weekEstimate.textContent=available(week)?(zh?'基于已观测窗口进度，不由 Token 总量反推':'Based on the observed window; never inferred from token totals'):(zh?'等待可观测额度快照':'Waiting for an observed quota snapshot');
 }
 
 function syncRangeControls(){document.querySelectorAll('[data-range]').forEach(button=>{const active=button.dataset.range===state.range;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});$('custom-range').classList.toggle('visible',state.range==='custom');}
@@ -376,10 +439,10 @@ function applyStaticLanguage(){
   const bindings=[
     ['.nav-item[data-target="overview"] span','Overview','总览'],['.nav-item[data-target="models"] span','Models','模型'],['.nav-item[data-target="sessions"] span','Sessions','Session'],['.nav-item[data-target="attribution"] span','Attribution','归因'],
     ['.privacy-status>span','Processed locally','仅在本机处理'],['.privacy-note p','No conversations, prompts, or API keys are uploaded.','不上传对话、提示词或 API 密钥。'],['.breadcrumb>span','Workspace','工作空间'],['#breadcrumb-current','Usage overview','用量总览'],['#mode-badge','Demo data','演示数据'],['#export-button span','Export','导出视图'],['#refresh-button span','Refresh data','刷新数据'],
-    ['.refresh-eyebrow','Refresh engine','刷新引擎'],['.refresh-popover>strong','Local parser · No model','本地解析器 · 不调用模型'],['.refresh-popover>p','Refresh re-reads local usage logs and recalculates the dashboard. It does not call a model or use Codex quota.','刷新会重新读取本地用量日志并计算看板，不会调用模型，也不会消耗 Codex 额度。'],['#refresh-quota-note','Account quota cards update when a fresh quota snapshot is available.','有新的额度快照时，5 小时和周额度卡片会同步更新。'],['#refresh-model-note','Starting a new Codex task to run this skill does use the model selected for that task.','重新发起 Codex 任务运行此 Skill 时，会使用该任务当前选择的模型。'],
+    ['.refresh-eyebrow','Refresh engine','刷新引擎'],['.refresh-popover>strong','Local parser · No model','本地解析器 · 不调用模型'],['.refresh-popover>p','Refresh re-reads local usage logs and recalculates the dashboard. It does not call a model or use Codex quota.','刷新会重新读取本地用量日志并计算看板，不会调用模型，也不会消耗 Codex 额度。'],['#refresh-quota-note','Refresh can only read quota snapshots already persisted by Codex; it cannot force an account sync.','刷新只能读取 Codex 已写入本机的额度快照，不能强制账户侧同步。'],['#refresh-model-note','Starting a new Codex task to run this skill does use the model selected for that task.','重新发起 Codex 任务运行此 Skill 时，会使用该任务当前选择的模型。'],
     ['#page-title','Usage, at a glance.','用量，一眼清楚。'],['.hero>div>p','See where your Codex usage goes, from account quota to individual model calls.','从账户额度到每一次模型调用，找到消耗发生的位置和原因。'],['.snapshot-status>span','Static snapshot','静态快照'],
-    ['.quota-five .quota-top span','5-hour window','5 小时窗口'],['.quota-five .quota-top small','Account-wide · Observed','账户全局 · Observed'],['.quota-five .quota-bottom>span:first-child','73% used · 27% left','已使用 73% · 剩余 27%'],['#five-reset-label','Reset in ','重置倒计时 '],['#five-estimate-copy','At this pace, the short window may hit its limit before reset','按当前节奏，短窗口可能在重置前触顶'],
-    ['.quota-week .quota-top span','Weekly window','每周窗口'],['.quota-week .quota-top small','Account-wide · Observed','账户全局 · Observed'],['.quota-week .quota-bottom>span:first-child','18% used · 82% left','已使用 18% · 剩余 82%'],['#week-reset-label','Reset in ','重置倒计时 '],['#week-estimate-copy','Projected to use 64% by the end of this cycle','按当前速度预计本周期使用 64%'],
+    ['.quota-five .quota-top span','5-hour window','5 小时窗口'],['.quota-five .quota-top small','Account-wide · Observed window','账户全局 · Observed window'],['.quota-five .quota-bottom>span:first-child','27% remaining','剩余 27%'],['#five-reset-label','Resets in ','重置倒计时 '],['#five-estimate-copy','At this pace, the short window may hit its limit before reset','按当前节奏，短窗口可能在重置前触顶'],
+    ['.quota-week .quota-top span','Weekly window','每周窗口'],['.quota-week .quota-top small','Account-wide · Observed window','账户全局 · Observed window'],['.quota-week .quota-bottom>span:first-child','82% remaining','剩余 82%'],['#week-reset-label','Resets in ','重置倒计时 '],['#week-estimate-copy','Projected to use 64% by the end of this cycle','按当前速度预计本周期使用 64%'],
     ['.quota-advice strong','Short-window pace is high','短窗口使用较快'],['.quota-advice p','The 5-hour window is ahead of elapsed time; weekly pacing remains normal. Quota snapshots are independent of the token filters below.','当前 5h 使用进度高于时间进度；每周窗口节奏仍正常。额度来自账户快照，与下方 Token 筛选独立。'],
     ['[data-range="today"]','Today','今天'],['[data-range="7d"]','Last 7 days','近 7 天'],['[data-range="30d"]','Last 30 days','近 30 天'],['[data-range="custom"]','Custom','自定义'],['.custom-range span','to','至'],['#reset-filters','Reset','重置'],['.filter-context small','Local time · Local observations','本地时间 · 本地观测'],
     ['.kpi-rail>div:nth-child(1)>span','Total Tokens · Observed','Token 总量 · Observed'],['.kpi-rail>div:nth-child(2)>span','Burn Rate · Calculated','消耗速率 · Calculated'],['.kpi-rail>div:nth-child(3)>span','Tokens / Task · Calculated','单 Session Token · Calculated'],['.kpi-rail>div:nth-child(4)>span','Tokens / Turn · Calculated','单轮 Token · Calculated'],['.kpi-rail>div:nth-child(5)>span','Cache Hit · Calculated','缓存命中 · Calculated'],
@@ -601,7 +664,7 @@ function exportDashboardImage(){
   const card=(x,y,w,h)=>round(x,y,w,h,18,palette.surface,palette.line);
   text('Ledger',64,68,34,palette.text,700);text(state.language==='zh'?'用量分享视图':'Usage share view',66,96,15,palette.muted,500);round(338,42,194,34,17,dark?'rgba(255,159,10,.15)':'#fff1d6');text('SYNTHETIC DEMO',355,64,10,palette.orange,700,mono);text(new Date().toLocaleString(state.language==='zh'?'zh-CN':'en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),width-360,68,13,palette.muted,500,mono);text(`${rangeBounds()[0]} — ${rangeBounds()[1]}`,width-360,94,12,palette.tertiary,500,mono);ctx.fillStyle=palette.blueStrong;ctx.fillRect(64,116,1472,3);
   const quotaCards=[[state.language==='zh'?'5 小时窗口':'5-hour window',quotaSnapshot.five,'#ff9f0a'],[state.language==='zh'?'周窗口':'Weekly window',quotaSnapshot.week,palette.blueStrong]],quotaY=144,quotaW=720;
-  quotaCards.forEach((item,index)=>{const x=64+index*752;card(x,quotaY,quotaW,132);label(item[0],x+24,quotaY+28);text(`${Math.round(item[1].used)}%`,x+24,quotaY+75,34,palette.text,700,mono);text(`${Math.max(0,100-Math.round(item[1].used))}% left`,x+132,quotaY+74,14,palette.muted,500);round(x+24,quotaY+94,672,10,5,palette.raised);round(x+24,quotaY+94,672*Math.max(0,Math.min(1,item[1].used/100)),10,5,item[2]);});
+  quotaCards.forEach((item,index)=>{const x=64+index*752,available=item[1]?.used!==null&&item[1]?.used!==undefined&&Number.isFinite(Number(item[1].used))&&item[1]?.source!=='stale',used=available?Math.round(Number(item[1].used)):null;card(x,quotaY,quotaW,132);label(item[0],x+24,quotaY+28);text(available?`${used}% used`:'—',x+24,quotaY+75,34,palette.text,700,mono);text(available?`${Math.max(0,100-used)}% remaining`:(item[1]?.source==='stale'?'Awaiting fresh snapshot':'Snapshot unavailable'),x+250,quotaY+74,14,palette.muted,500);round(x+24,quotaY+94,672,10,5,palette.raised);if(available)round(x+24,quotaY+94,672*Math.max(0,Math.min(1,used/100)),10,5,item[2]);});
   const metrics=[['Total tokens',formatTokens(currentMetrics.total)],['Burn rate',currentMetrics.burnRate?t('perDay',formatTokens(currentMetrics.burnRate)):'—'],['Tokens / task',formatTokens(currentMetrics.tokensPerTask)],['Cache hit',formatPercent((currentMetrics.cacheRate||0)*100)]],kpiY=302,kpiW=356;
   metrics.forEach((item,index)=>{const x=64+index*376;card(x,kpiY,kpiW,104);label(item[0],x+20,kpiY+27);text(item[1],x+20,kpiY+72,26,palette.text,700,mono);});
   const models=currentMetrics.models||[],byVolume=[...models].sort((a,b)=>b.total-a.total).slice(0,4),byMetric=[...models].sort((a,b)=>{const av=state.leftMetric==='speed'?(a.speed||0):(a.calls?a.credits/a.calls:0),bv=state.leftMetric==='speed'?(b.speed||0):(b.calls?b.credits/b.calls:0);return bv-av;}).slice(0,4),modelY=438,panelW=720;
@@ -621,14 +684,16 @@ $('refresh-info').addEventListener('click',event=>{event.stopPropagation();const
 document.addEventListener('click',event=>{if(!event.target.closest('.refresh-cluster')){$('refresh-popover').hidden=true;$('refresh-info').setAttribute('aria-expanded','false');}});
 $('refresh-button').addEventListener('click',async()=>{const button=$('refresh-button'),label=button.querySelector('span');button.classList.add('loading');button.disabled=true;label.textContent=t('refreshing');try{if(typeof window.ledgerRefreshAdapter==='function'){const result=await window.ledgerRefreshAdapter()||{};showToast(state.language==='zh'?`本地刷新完成 · ${result.records??'—'} 条记录`:`Local refresh complete · ${result.records??'—'} records`);if(result.reload!==false){window.setTimeout(()=>window.location.reload(),120);return;}}else if(IS_LIVE_REPORT){showToast(state.language==='zh'?'当前是静态快照 · 请用 --open 或 --serve 启动实时刷新':'Static snapshot · start Ledger with --open or --serve for live refresh');return;}else{showToast(state.language==='zh'?'演示模式 · 运行 python3 scripts/ledger.py --open 读取真实数据':'Demo mode · run python3 scripts/ledger.py --open for live local data');return;}}catch(error){showToast(state.language==='zh'?'刷新失败 · 已保留上次数据':'Refresh failed · kept the last data');console.error('Ledger refresh failed',error);}finally{button.classList.remove('loading');button.disabled=false;label.textContent=t('refreshData');}});
 
-setInterval(()=>{const elapsed=Math.floor((Date.now()-quotaStarted)/1000);$('five-countdown').textContent=quotaSnapshot.five.source==='unavailable'?'—':formatCountdown(quotaSnapshot.five.seconds-elapsed);$('week-countdown').textContent=quotaSnapshot.week.source==='unavailable'?'—':formatCountdown(quotaSnapshot.week.seconds-elapsed,true);},1000);
+setInterval(()=>{if(expireQuotaSnapshotsNow())renderQuota();else{updateQuotaCountdown('five',quotaSnapshot.five);updateQuotaCountdown('week',quotaSnapshot.week,true);}},1000);
 const storedQuota=readStoredQuota();
-// Prefer the quota captured with a generated Ledger report, then a newer stored/sidecar snapshot.
+// Live generated reports are authoritative. Browser storage must never resurrect an
+// older quota percentage after the parser has written a stale/unavailable snapshot.
 if(EXTERNAL_PAYLOAD?.quota)applyQuotaSnapshot({...EXTERNAL_PAYLOAD.quota,observedAt:EXTERNAL_PAYLOAD.meta?.observedAt||EXTERNAL_PAYLOAD.meta?.generatedAt||new Date().toISOString()},{persist:false,force:true});
 loadQuotaScriptSync();
 const sidecarQuota=window.__CODEX_QUOTA_SNAPSHOT__;
-const initialQuota=snapshotTime(storedQuota)>=snapshotTime(sidecarQuota)?storedQuota:sidecarQuota;
+const initialQuota=IS_LIVE_REPORT?sidecarQuota:(snapshotTime(storedQuota)>=snapshotTime(sidecarQuota)?storedQuota:sidecarQuota);
 if(initialQuota && snapshotTime(initialQuota)>=quotaObservedAt)applyQuotaSnapshot(initialQuota,{persist:false});
+if(IS_LIVE_REPORT&&!EXTERNAL_PAYLOAD?.quota&&!sidecarQuota)clearStoredQuota();
 if(EXTERNAL_PAYLOAD?.meta?.generatedAt){const d=new Date(EXTERNAL_PAYLOAD.meta.generatedAt);if(Number.isFinite(d.getTime()))$('snapshot-time').textContent=d.toLocaleString(state.language==='zh'?'zh-CN':'en-US',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
 render();
 if(quotaRefreshState==='initial')window.setTimeout(async()=>{if(await loadQuotaSidecar()){renderQuota();$('snapshot-time').textContent=state.language==='zh'?'刚刚更新':'Updated just now';}},0);

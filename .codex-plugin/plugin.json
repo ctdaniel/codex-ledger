@@ -1,6 +1,6 @@
 {
   "name": "codex-ledger",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Local-first Codex usage analytics and observability.",
   "skills": "./skills/",
   "interface": {

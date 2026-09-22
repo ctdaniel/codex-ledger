@@ -12,7 +12,7 @@
   <img alt="Local first" src="https://img.shields.io/badge/local--first-yes-0F766E.svg">
   <img alt="Telemetry" src="https://img.shields.io/badge/telemetry-none-0F766E.svg">
   <img alt="Codex Plugin" src="https://img.shields.io/badge/Codex-Plugin-111827.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-111827.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.2.1-111827.svg">
 </p>
 
 # Know where your Codex usage goes.
@@ -323,6 +323,7 @@ Ledger v0.2 intentionally avoids pretending that local telemetry is a formal bil
 - Context Growth uses observed per-turn input tokens as a local proxy; it is **not** official context-window occupancy.
 - Session Health is relative to your own local usage distribution, not an external benchmark or a quality score.
 - Quota cards are shown only when a persisted `rate_limits` snapshot is observed.
+- **Refresh data** rescans quota snapshots already persisted by Codex; it cannot force Codex to query the account quota service. When an observed reset boundary passes, Ledger hides the old percentage instead of showing a stale value. Use Codex once, then click **Refresh data** to load the next persisted snapshot.
 - Ledger never converts token totals into an invented 5-hour or weekly quota percentage.
 - Generation speed appears only when usable duration telemetry is present.
 - Model rate-weighted intensity appears only for models with a known built-in mapping; otherwise it is left unavailable.
@@ -373,7 +374,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and [docs/D
 
 ## Roadmap
 
-### Available in v0.2.0
+### Available in v0.2.1
 
 - [x] local Codex token parser + live refresh
 - [x] project / model / session attribution

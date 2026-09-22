@@ -6,6 +6,7 @@ import urllib.request
 from functools import partial
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from datetime import datetime, timezone
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -42,8 +43,8 @@ class LedgerParserTests(unittest.TestCase):
                         "last_token_usage": {"input_tokens": 1000, "cached_input_tokens": 800, "output_tokens": 100, "reasoning_output_tokens": 25, "total_tokens": 1100},
                     },
                     "rate_limits": {
-                        "primary": {"used_percent": 31, "window_minutes": 300, "resets_at": 1789786800},
-                        "secondary": {"used_percent": 18, "window_minutes": 10080, "resets_at": 1790388000},
+                        "primary": {"used_percent": 31, "window_minutes": 300, "resets_at": 4102444800},
+                        "secondary": {"used_percent": 18, "window_minutes": 10080, "resets_at": 4103049600},
                     },
                 },
             },
@@ -85,6 +86,23 @@ class LedgerParserTests(unittest.TestCase):
             self.assertEqual(quota["five"]["used"], 31)
             self.assertEqual(quota["week"]["used"], 18)
             self.assertEqual(stats.token_events, 2)
+
+    def test_expired_quota_window_is_marked_stale(self):
+        observation = ledger.QuotaObservation(
+            datetime(2026, 9, 22, 0, 0, tzinfo=timezone.utc),
+            {
+                "primary": {"used_percent": 42, "window_minutes": 300, "resets_at": 1790038800},
+                "secondary": {"used_percent": 20, "window_minutes": 10080, "resets_at": 1790643600},
+            },
+        )
+        payload = ledger.quota_payload(
+            observation,
+            now=datetime(2026, 9, 22, 2, 0, tzinfo=timezone.utc),
+        )
+        self.assertIsNone(payload["five"]["used"])
+        self.assertEqual(payload["five"]["source"], "stale")
+        self.assertTrue(payload["five"]["stale"])
+        self.assertEqual(payload["week"]["used"], 20)
 
     def test_report_payload_does_not_contain_prompt_content(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -146,6 +164,10 @@ class LedgerParserTests(unittest.TestCase):
                                 "total_tokens": 3300,
                             }
                         },
+                        "rate_limits": {
+                            "primary": {"used_percent": 7, "window_minutes": 300, "resets_at": 4102444800},
+                            "secondary": {"used_percent": 21, "window_minutes": 10080, "resets_at": 4103049600},
+                        },
                     },
                 }
                 with rollout.open("a", encoding="utf-8") as handle:
@@ -158,8 +180,12 @@ class LedgerParserTests(unittest.TestCase):
                     self.assertEqual(response.headers.get("Cache-Control"), "no-store, max-age=0")
                 self.assertEqual(fresh["meta"]["counts"]["records"], 3)
                 self.assertEqual(fresh["records"][-1]["date"], "2026-09-20")
+                self.assertEqual(fresh["quota"]["five"]["used"], 7)
+                self.assertEqual(fresh["quota"]["week"]["used"], 21)
                 persisted = (output / "ledger-data.local.js").read_text(encoding="utf-8")
                 self.assertIn("2026-09-20", persisted)
+                quota_sidecar = (output / "quota-snapshot.local.js").read_text(encoding="utf-8")
+                self.assertIn('"used":7', quota_sidecar)
             finally:
                 server.shutdown()
                 server.server_close()

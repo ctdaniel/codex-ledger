@@ -59,7 +59,7 @@
             <div class="refresh-popover" id="refresh-popover" hidden>
               <span class="refresh-eyebrow">Refresh engine</span><strong>Local parser · No model</strong>
               <p>Refresh re-reads local usage logs and recalculates the dashboard. It does not call a model or use Codex quota.</p>
-              <div class="refresh-note"><i></i><span id="refresh-quota-note">Account quota cards update when a fresh quota snapshot is available.</span></div>
+              <div class="refresh-note"><i></i><span id="refresh-quota-note">Refresh can only read quota snapshots already persisted by Codex; it cannot force an account sync.</span></div>
               <div class="refresh-note"><i></i><span id="refresh-model-note">Starting a new Codex task to run this skill does use the model selected for that task.</span></div>
             </div>
           </div>
@@ -76,16 +76,16 @@
 
       <section class="quota-layout" aria-label="账户额度快照">
         <article class="quota-card quota-five">
-          <div class="quota-top"><div><span>5-hour window</span><small>Account-wide · Observed</small></div><strong><span id="five-used">73</span><small>%</small></strong></div>
-          <div class="quota-meter warning" id="five-meter" role="meter" aria-label="五小时额度已使用 73%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="73"><i style="--quota:.73"></i></div>
-          <div class="quota-bottom"><span id="five-usage-copy">73% used · 27% left</span><span><span id="five-reset-label">Reset in </span><b id="five-countdown">02:14:32</b></span></div>
-          <p class="quota-estimate"><span>Estimated</span><span id="five-estimate-copy">At this pace, the short window may hit its limit before reset</span></p>
+          <div class="quota-top"><div><span>5-hour window</span><small>Account-wide · Observed window</small></div><strong><span id="five-used">73</span><small id="five-used-label">% used</small></strong></div>
+          <div class="quota-meter warning" id="five-meter" role="meter" aria-label="Five-hour quota 73% used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="73"><i style="--quota:.73"></i></div>
+          <div class="quota-bottom"><span id="five-usage-copy">27% remaining</span><span><span id="five-reset-label">Resets in </span><b id="five-countdown">02:14:32</b></span></div>
+          <p class="quota-estimate"><span id="five-snapshot-badge">Window snapshot</span><span id="five-estimate-copy">Observed locally; never inferred from token totals</span></p>
         </article>
         <article class="quota-card quota-week">
-          <div class="quota-top"><div><span>Weekly window</span><small>Account-wide · Observed</small></div><strong><span id="week-used">18</span><small>%</small></strong></div>
-          <div class="quota-meter" id="week-meter" role="meter" aria-label="每周额度已使用 18%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="--quota:.18"></i></div>
-          <div class="quota-bottom"><span id="week-usage-copy">18% used · 82% left</span><span><span id="week-reset-label">Reset in </span><b id="week-countdown">6d 11h</b></span></div>
-          <p class="quota-estimate"><span>Estimated</span><span id="week-estimate-copy">Projected to use 64% by the end of this cycle</span></p>
+          <div class="quota-top"><div><span>Weekly window</span><small>Account-wide · Observed window</small></div><strong><span id="week-used">18</span><small id="week-used-label">% used</small></strong></div>
+          <div class="quota-meter" id="week-meter" role="meter" aria-label="Weekly quota 18% used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="--quota:.18"></i></div>
+          <div class="quota-bottom"><span id="week-usage-copy">82% remaining</span><span><span id="week-reset-label">Resets in </span><b id="week-countdown">6d 11h</b></span></div>
+          <p class="quota-estimate"><span id="week-snapshot-badge">Window snapshot</span><span id="week-estimate-copy">Observed locally; never inferred from token totals</span></p>
         </article>
         <article class="quota-advice">
           <span class="advice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v10M12 18v.5"/><circle cx="12" cy="12" r="9"/></svg></span>
